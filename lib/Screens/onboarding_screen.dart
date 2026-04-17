@@ -20,6 +20,7 @@ class OnboardingScreen extends HookWidget {
   Widget build(BuildContext context) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final nameController = useTextEditingController();
+    final selectedDate = useState<DateTime?>(null);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Welcome'),),
@@ -41,21 +42,58 @@ class OnboardingScreen extends HookWidget {
                   }
                   return null;
                 },
-          ),
-              DatePickerDialog(
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900, 1, 1),
-                  lastDate: DateTime.now(),
-                  initialEntryMode: DatePickerEntryMode.input,
-                  errorFormatText: 'Format date as mm/dd/yyyy',
-                  errorInvalidText: 'Invalid date',
+             ),
+              GestureDetector(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime(2000, 1, 1),
+                      firstDate: DateTime(1900, 1, 1),
+                      lastDate: DateTime.now()
+                  );
+                  if(picked != null) {
+                    selectedDate.value = picked;
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.grey)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        selectedDate.value != null
+                            ? '${selectedDate.value!.month}/${selectedDate.value!.day}/${selectedDate.value!.year}'
+                            : 'Date of Birth',
+                        style: TextStyle(
+                          color: selectedDate.value != null ? Colors.black : Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Icon(Icons.calendar_today, color: Colors.grey),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                   onPressed: () {
-                    if(formKey.currentState!.validate()) {
-                      print('Name: ${nameController.text}');
+                    final isFormValid = formKey.currentState!.validate();
+                    final isDateSelected = selectedDate.value != null;
+
+                    if(!isDateSelected) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please select your date of birth')),
+                      );
                     }
+
+                    if(isFormValid && isDateSelected) {
+                      print('Name: ${nameController.text}');
+                      print('Date of Birth: ${selectedDate.value}');
+                    }
+
                   },
                   child: const Text('Continue'),
               )
