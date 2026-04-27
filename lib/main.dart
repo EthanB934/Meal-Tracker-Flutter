@@ -1,122 +1,68 @@
 import 'package:flutter/material.dart';
-
+import 'package:my_flutter_application/Screens/onboarding_screen.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Meal Tracker',
+      home: OnboardingScreen(),
     );
   }
 }
+/*
+  Problem: I need to develop a form field. This form field is required whenever
+  a new user downloads the app, and it is there first time setting the app up.
+  There is no real use for this form field, other than to learn how to develop
+  for Flutter/Dart. The form field will only be displayed once at initial
+  startup. If the user already has completed this form, it will not show up
+  again. Instead, it will be saved in the user profile tab. There the user may
+  update the information if they so need to, but it is really unnecessary. It
+  may possibly be used later for communication between the user and their
+  dietitian.
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  Strategy:
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
+  Task 1. First, I have to research how form fields work, I have included the
+  Flutter Forms package, so it might be worthwhile to read up on that.
+  Task 2. I will probably need to define a 'form' class that can be used not only
+  for this problem, but as a reusable component elsewhere in the development of
+  the app.
+  Task 3. Form fields are comprised of a few elements:
+    (a) Header title
+    (b) Labels
+    (c) Input fields
+    (d) Buttons
+  I will need to research these components, how they work together and what support
+  is already included for them in the main flutter package.
+  Task 4. I will need to figure out how much responsibility a button actually holds,
+  do I need to develop an event listener for when the button is clicked, or is there
+  support for that as well?
+  Task 5. When the button is clicked, I need to make sure there is actual information
+  in the input fields, these fields will certainly be required.
+  Task 6. If the input fields are filled out, I will need to check the type of data
+  that they have within them. Generally, the input field will return string types,
+  so how will I account for numbers in the 'Name' field? Secondarily, I will have to
+  enforce some date time format, and coerce the data entered into the 'date of birth'
+  field to conform to that requirement.
+  Task 7. If the 'Name' and 'Date of Birth' fields are filled out, contain the correct
+  type of data, then the submission event can finally occur. I will need to research
+  what that looks like. I intend to use a Flutter supported, lightweight, personal
+  database (i.e. sqflite) to handle permanent storage of information, but how does
+  the information actual transfer from transient state to a SQL query to be submitted
+  into the database?
+  Task 8. Once I figure out how data is transferred from the form, perform that operation
+  Task 9. Ensure that the information from the form data was saved permanently to the
+  sqflite database.
+  Task 10. Once the form data is surely saved in the sqflite database, the user needs
+  to be notified that it was successfully saved. If it was not successfully saved, then
+  at this point, it is a server issue and that should be thrown instead.
+  Task 11. When the user receives the notification that the form data was saved
+  successfully in the sqflite database, they will then be routed to the next step of
+  the user onboarding process, where they will define their preferences.
+ */
