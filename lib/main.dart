@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_flutter_application/Screens/onboarding_screen.dart';
+import 'package:my_flutter_application/data/database_helper.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
+  DatabaseHelper().initDatabase();
   runApp(MyApp());
 }
 
