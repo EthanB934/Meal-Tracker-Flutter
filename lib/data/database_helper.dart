@@ -16,13 +16,60 @@ class DatabaseHelper {
     Database database = await openDatabase(
        path,
        version: 1,
+       onOpen: (Database db) async {
+         await db.execute(
+             'PRAGMA foreign_keys = ON'
+         );
+       },
        onCreate: (Database db, int version) async {
          await db.execute(
-           'CREATE TABLE Test (id INTEGER PRIMARY KEY, name TEXT, value INTEGER, num REAL)'
+           'CREATE TABLE IF NOT EXISTS user_profile ('
+               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+               'name TEXT NOT NULL, '
+               'date_of_birth TEXT NOT NULL)'
+         );
+         await db.execute(
+           'CREATE TABLE IF NOT EXISTS meal ('
+               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+               'userId INTEGER NOT NULL,'
+               'type TEXT NOT NULL,'
+               'createdAT TEXT NOT NULL, '
+               'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
+         );
+         await db.execute(
+           'CREATE TABLE IF NOT EXISTS food ('
+               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+               'userId INTEGER NOT NULL,'
+               'name TEXT NOT NULL, '
+               'cost INTEGER, '
+               'calories INTEGER, '
+               'total_fat INTEGER, '
+               'sodium INTEGER,'
+               'total_carbohydrates INTEGER,'
+               'total_sugars INTEGER,'
+               'protein INTEGER,'
+               'saturated_fat INTEGER,'
+               'cholesterol INTEGER,'
+               'fiber INTEGER,'
+               'vitamin_d INTEGER,'
+               'calcium INTEGER,'
+               'potassium INTEGER,'
+               'iron INTEGER,'
+               'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
+         );
+         await db.execute(
+           'CREATE TABLE IF NOT EXISTS meal_food ('
+               'mealId INTEGER NOT NULL,'
+               'foodId INTEGER NOT NULL,'
+               'quantity INTEGER NOT NULL,'
+               'FOREIGN KEY (mealId) REFERENCES meal (id),'
+               'FOREIGN KEY (foodId) REFERENCES food (id))'
          );
        }
     );
 
     return database;
   }
+
+
 }
