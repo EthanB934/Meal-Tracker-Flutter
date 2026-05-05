@@ -9,6 +9,13 @@ class DatabaseHelper {
     return _instance;
   }
 
+  static Database? _database;
+
+  Future<Database> get database async {
+    _database ??= await initDatabase();
+    return _database!;
+  }
+
   Future<Database> initDatabase () async {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'meal_tracker.db');
@@ -68,8 +75,10 @@ class DatabaseHelper {
        }
     );
 
-    return database;
+    return _database = database;
   }
 
-
+  Future<int> createUser(String name, String dateOfBirth) async {
+    _database ??=DatabaseHelper().initDatabase();
+  }
 }
