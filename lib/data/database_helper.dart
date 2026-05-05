@@ -90,4 +90,14 @@ class DatabaseHelper {
 
     return result;
   }
+
+  Future<bool> userExists() async {
+    final db = await database;
+
+    List<Map<String, Object?>> user = await db.rawQuery(
+      'SELECT * FROM user_profile LIMIT 1'
+    );
+
+    return user.isNotEmpty;
+  }
 }
