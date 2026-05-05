@@ -79,6 +79,15 @@ class DatabaseHelper {
   }
 
   Future<int> createUser(String name, String dateOfBirth) async {
-    _database ??=DatabaseHelper().initDatabase();
+    final db = await database;
+
+    int result = await db.transaction<int>((transaction) async {
+      return await transaction.rawInsert(
+        'INSERT INTO user_profile(name, date_of_birth) VALUES (?, ?)',
+        [name, dateOfBirth]
+      );
+    });
+
+    return result;
   }
 }
