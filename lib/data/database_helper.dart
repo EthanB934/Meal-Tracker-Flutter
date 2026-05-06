@@ -62,10 +62,11 @@ class DatabaseHelper {
                'calcium INTEGER,'
                'potassium INTEGER,'
                'iron INTEGER,'
-               'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
+               'FOREIGN KEY (userId) REFERENCES user_profile (id))'
          );
          await db.execute(
            'CREATE TABLE IF NOT EXISTS meal_food ('
+               'id INTEGER PRIMARY KEY AUTOINCREMENT,'
                'mealId INTEGER NOT NULL,'
                'foodId INTEGER NOT NULL,'
                'quantity INTEGER NOT NULL,'
