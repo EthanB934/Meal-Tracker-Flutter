@@ -8,13 +8,13 @@ import 'package:my_flutter_application/services/profile_service.dart';
   once they open the app. It's purpose is to initiate the user's profile and
   their preferences which will determine the UI.
 
-  Written here is a form where the first-time users will give there name and
-  date of birth. There is strict typing enforced for the name as text. Notice
-  that the main form of UI is known as widgets. There are stateless and stateful
-  widgets provided by the main flutter package used here. A controller for the
-  form field is incorporated here from the Flutter Hooks package to assist in
-  retrieving the current value of the transient state in the form field inputs.
+  Written here is a form where the first-time users will give their name and
+  date of birth. Validation of form data is performed in Profile Service. Once
+  the form data is validated, it is then sent to the Database Helper service.
+  Finally, when the user is created (their name and date of birth given), they
+  continue in the onboarding flow to set their preferences.
  */
+
 class OnboardingScreen extends HookWidget {
   const OnboardingScreen({super.key});
 
@@ -89,19 +89,25 @@ class OnboardingScreen extends HookWidget {
                         const SnackBar(content: Text('Please select your date of birth')),
                       );
                     }
-
                     if(isFormValid && isDateSelected) {
-                      if(selectedDate.value == null) {
-                        throw Exception('Select a date');
-                      }
-                      DateTime date = selectedDate.value as DateTime;
-                      await ProfileService().createUserProfile(nameController.text, date);
-                    }
+                      try {
+                        DateTime date = selectedDate.value as DateTime;
+                        int result = await ProfileService().createUserProfile(nameController.text, date);
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(builder: (BuildContext context) => const UserPreferences()),
-                    );
+                        if(result > 0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(builder: (BuildContext context) => const UserPreferences()),
+                          );
+                        }
+                      }
+
+                      catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    }
                   },
                   child: const Text('Continue'),
               )
