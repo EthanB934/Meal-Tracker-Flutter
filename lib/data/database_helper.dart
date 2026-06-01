@@ -87,7 +87,7 @@ class DatabaseHelper {
                  'userId INTEGER NOT NULL,'
                  'nutrientId INTEGER NOT NULL,'
                  'tracking_state TEXT NOT NULL DEFAULT \'untracked\','
-                 'goal_amount REAL'
+                 'goal_amount REAL,'
                  'FOREIGN KEY (userId) REFERENCES user_profile (id),'
                  'FOREIGN KEY (nutrientId) REFERENCES nutrient (id))'
          );
@@ -102,8 +102,8 @@ class DatabaseHelper {
   Future<void> _seedDatabase (Database db) async {
     final batch = db.batch();
     batch.execute(
-        'INSERT INTO nutrient(name) VALUES (?)',
-        ["calories"]
+        'INSERT INTO nutrient(name) VALUES (?, ?)',
+        ["calories", "kcal"]
     );
 
     batch.execute(
@@ -119,11 +119,6 @@ class DatabaseHelper {
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
         ["dietary_fiber"]
-    );
-
-    batch.execute(
-        'INSERT INTO nutrient(name) VALUES (?)',
-        ["fat"]
     );
 
     batch.execute(
