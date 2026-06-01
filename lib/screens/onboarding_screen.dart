@@ -95,7 +95,7 @@ class OnboardingScreen extends HookWidget {
                         int result = await ProfileService().createUserProfile(nameController.text, date);
 
                         if(result > 0) {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute<void>(builder: (BuildContext context) => const UserPreferences()),
                           );

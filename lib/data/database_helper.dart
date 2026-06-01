@@ -30,53 +30,187 @@ class DatabaseHelper {
        },
        onCreate: (Database db, int version) async {
          await db.execute(
-           'CREATE TABLE IF NOT EXISTS user_profile ('
-               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-               'name TEXT NOT NULL, '
-               'date_of_birth TEXT NOT NULL)'
+             'CREATE TABLE IF NOT EXISTS user_profile ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                 'name TEXT NOT NULL, '
+                 'date_of_birth TEXT NOT NULL)'
          );
          await db.execute(
-           'CREATE TABLE IF NOT EXISTS meal ('
-               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-               'userId INTEGER NOT NULL,'
-               'type TEXT NOT NULL,'
-               'createdAT TEXT NOT NULL, '
-               'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
+             'CREATE TABLE IF NOT EXISTS meal ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                 'userId INTEGER NOT NULL,'
+                 'type TEXT NOT NULL,'
+                 'createdAT TEXT NOT NULL, '
+                 'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
          );
          await db.execute(
-           'CREATE TABLE IF NOT EXISTS food ('
-               'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-               'userId INTEGER NOT NULL,'
-               'name TEXT NOT NULL, '
-               'cost INTEGER, '
-               'calories INTEGER, '
-               'total_fat INTEGER, '
-               'sodium INTEGER,'
-               'total_carbohydrates INTEGER,'
-               'total_sugars INTEGER,'
-               'protein INTEGER,'
-               'saturated_fat INTEGER,'
-               'cholesterol INTEGER,'
-               'fiber INTEGER,'
-               'vitamin_d INTEGER,'
-               'calcium INTEGER,'
-               'potassium INTEGER,'
-               'iron INTEGER,'
-               'FOREIGN KEY (userId) REFERENCES user_profile (id))'
+             'CREATE TABLE IF NOT EXISTS food ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT, '
+                 'userId INTEGER NOT NULL,'
+                 'name TEXT NOT NULL, '
+                 'cost INTEGER, '
+                 'calories INTEGER, '
+                 'total_fat INTEGER, '
+                 'sodium INTEGER,'
+                 'total_carbohydrates INTEGER,'
+                 'total_sugars INTEGER,'
+                 'protein INTEGER,'
+                 'saturated_fat INTEGER,'
+                 'cholesterol INTEGER,'
+                 'fiber INTEGER,'
+                 'vitamin_d INTEGER,'
+                 'calcium INTEGER,'
+                 'potassium INTEGER,'
+                 'iron INTEGER,'
+                 'FOREIGN KEY (userId) REFERENCES user_profile (id))'
          );
          await db.execute(
-           'CREATE TABLE IF NOT EXISTS meal_food ('
-               'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-               'mealId INTEGER NOT NULL,'
-               'foodId INTEGER NOT NULL,'
-               'quantity INTEGER NOT NULL,'
-               'FOREIGN KEY (mealId) REFERENCES meal (id),'
-               'FOREIGN KEY (foodId) REFERENCES food (id))'
+             'CREATE TABLE IF NOT EXISTS meal_food ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                 'mealId INTEGER NOT NULL,'
+                 'foodId INTEGER NOT NULL,'
+                 'quantity INTEGER NOT NULL,'
+                 'FOREIGN KEY (mealId) REFERENCES meal (id),'
+                 'FOREIGN KEY (foodId) REFERENCES food (id))'
          );
+
+         await db.execute(
+             'CREATE TABLE IF NOT EXISTS nutrient ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                 'name TEXT NOT NULL,'
+                 'unit TEXT NOT NULL DEFAULT \'g\')'
+         );
+
+         await db.execute(
+             'CREATE TABLE IF NOT EXISTS user_nutrient_preference ('
+                 'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                 'userId INTEGER NOT NULL,'
+                 'nutrientId INTEGER NOT NULL,'
+                 'tracking_state TEXT NOT NULL DEFAULT \'untracked\','
+                 'goal_amount REAL'
+                 'FOREIGN KEY (userId) REFERENCES user_profile (id),'
+                 'FOREIGN KEY (nutrientId) REFERENCES nutrient (id))'
+         );
+
+         await _seedDatabase(db);
        }
     );
 
     return _database = database;
+  }
+
+  Future<void> _seedDatabase (Database db) async {
+    final batch = db.batch();
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["calories"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["protein"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["total_carbohydrate"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["dietary_fiber"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["fat"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["total_fat"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["saturated_fat"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["trans_fat"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["cholesterol", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["sodium"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["total_sugars"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name) VALUES (?)',
+        ["added_sugars"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["calcium", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["iron", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["potassium", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin A", "mcg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin B6", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin B12", "mcg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin C", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin D", "mcg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin E", "mg"]
+    );
+
+    batch.execute(
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
+        ["Vitamin K", "mcg"]
+    );
+    await batch.commit(noResult: true);
   }
 
   Future<int> createUser(String name, String dateOfBirth) async {
