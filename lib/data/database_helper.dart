@@ -240,4 +240,14 @@ class DatabaseHelper {
 
     return user;
   }
+
+  Future<List<Map<String,Object?>>> getNutrients () async {
+    final db = await database;
+
+    List<Map<String, Object?>> nutrients = await db.rawQuery(
+        'SELECT * FROM nutrient'
+    );
+
+    return nutrients;
+  }
 }
