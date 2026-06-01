@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/screens/onboarding_screen.dart';
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
@@ -6,9 +7,11 @@ import 'package:my_flutter_application/services/profile_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper().initDatabase();
-  print('Database Initialized');
   bool userExists = await ProfileService().existingUser();
-  print('Does User Exist? $userExists');
+  if(userExists) {
+    await ProfileService().deleteExistingUser();
+    userExists = false;
+  }
   runApp(MyApp(userExists: userExists));
 }
 
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Meal Tracker',
-      home: userExists ? const Scaffold(body: Center(child: Text('Home')),) : OnboardingScreen(),
+      home: userExists ? HomeScreen() : OnboardingScreen(),
     );
   }
 }

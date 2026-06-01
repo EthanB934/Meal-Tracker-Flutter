@@ -101,4 +101,14 @@ class DatabaseHelper {
 
     return user.isNotEmpty;
   }
+
+  Future<int> deleteUser() async {
+    final db = await database;
+
+    int user = await db.rawDelete(
+      'DELETE FROM user_profile WHERE id = 1'
+    );
+
+    return user;
+  }
 }

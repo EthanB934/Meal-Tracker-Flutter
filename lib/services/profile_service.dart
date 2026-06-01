@@ -30,4 +30,8 @@ class ProfileService {
   Future<bool> existingUser() async {
     return await DatabaseHelper().userExists();
   }
+
+  Future<int> deleteExistingUser() async {
+    return await DatabaseHelper().deleteUser();
+  }
 }
