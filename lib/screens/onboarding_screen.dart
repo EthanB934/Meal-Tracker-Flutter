@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/services/profile_service.dart';
 
 /*
   The Onboarding Screen feature is the first thing new users will encounter
@@ -79,10 +80,9 @@ class OnboardingScreen extends HookWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     final isFormValid = formKey.currentState!.validate();
                     final isDateSelected = selectedDate.value != null;
-
                     if(!isDateSelected) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please select your date of birth')),
@@ -90,10 +90,12 @@ class OnboardingScreen extends HookWidget {
                     }
 
                     if(isFormValid && isDateSelected) {
-                      print('Name: ${nameController.text}');
-                      print('Date of Birth: ${selectedDate.value}');
+                      if(selectedDate.value == null) {
+                        throw Exception('Select a date');
+                      }
+                      DateTime date = selectedDate.value as DateTime;
+                      await ProfileService().createUserProfile(nameController.text, date);
                     }
-
                   },
                   child: const Text('Continue'),
               )
