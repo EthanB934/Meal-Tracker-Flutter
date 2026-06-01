@@ -8,10 +8,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper().initDatabase();
   bool userExists = await ProfileService().existingUser();
-  if(userExists) {
-    await ProfileService().deleteExistingUser();
-    userExists = false;
-  }
   runApp(MyApp(userExists: userExists));
 }
 

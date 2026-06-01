@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/screens/user_preferences.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
 
 /*
@@ -96,6 +97,11 @@ class OnboardingScreen extends HookWidget {
                       DateTime date = selectedDate.value as DateTime;
                       await ProfileService().createUserProfile(nameController.text, date);
                     }
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(builder: (BuildContext context) => const UserPreferences()),
+                    );
                   },
                   child: const Text('Continue'),
               )
