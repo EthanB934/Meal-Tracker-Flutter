@@ -19,7 +19,6 @@ class DatabaseHelper {
   Future<Database> initDatabase () async {
     var databasePath = await getDatabasesPath();
     String path = join(databasePath, 'meal_tracker.db');
-
     Database database = await openDatabase(
        path,
        version: 1,
@@ -102,7 +101,7 @@ class DatabaseHelper {
   Future<void> _seedDatabase (Database db) async {
     final batch = db.batch();
     batch.execute(
-        'INSERT INTO nutrient(name) VALUES (?, ?)',
+        'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
         ["calories", "kcal"]
     );
 

@@ -1,7 +1,7 @@
 class Nutrient {
   final int? id;
-  final String? name;
-  final String? unit;
+  final String name;
+  final String unit;
 
   Nutrient({this.id, required this.name, required this.unit});
 
@@ -13,4 +13,3 @@ class Nutrient {
     );
   }
 }
-
