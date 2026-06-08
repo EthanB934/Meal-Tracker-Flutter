@@ -35,7 +35,7 @@ class UserPreferences extends HookWidget{
               itemCount: nutrients.length,
               itemBuilder: (context, index) {
                 final nutrient = nutrients[index];
-                return ListTile(
+                return ExpansionTile(
                   title: Text(nutrient.name ?? ""),
                   subtitle: Text(nutrient.unit ?? ""),
                 );
