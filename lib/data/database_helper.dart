@@ -1,3 +1,4 @@
+import 'package:my_flutter_application/models/UserNutrientPreference.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 class DatabaseHelper {
@@ -83,8 +84,8 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS user_nutrient_preference ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                 'userId INTEGER NOT NULL,'
-                 'nutrientId INTEGER NOT NULL,'
+                 'user_id INTEGER NOT NULL,'
+                 'nutrient_id INTEGER NOT NULL,'
                  'tracking_state TEXT NOT NULL DEFAULT \'untracked\','
                  'goal_amount REAL,'
                  'FOREIGN KEY (userId) REFERENCES user_profile (id),'
@@ -207,6 +208,7 @@ class DatabaseHelper {
     await batch.commit(noResult: true);
   }
 
+  // User Data
   Future<int> createUser(String name, String dateOfBirth) async {
     final db = await database;
 
@@ -240,6 +242,7 @@ class DatabaseHelper {
     return user;
   }
 
+  // Nutrient Data
   Future<List<Map<String,Object?>>> getNutrients () async {
     final db = await database;
 
@@ -248,5 +251,51 @@ class DatabaseHelper {
     );
 
     return nutrients;
+  }
+
+  // User Nutrient Preference Data
+  Future<List<Map<String, Object?>>> getUserPreferences() async {
+    final db = await database;
+
+    List<Map<String, Object?>> userPreferences = await db.rawQuery(
+      'SELECT * FROM user_nutrient_preference'
+    );
+
+    return userPreferences;
+  }
+
+  Future<int> createUserNutrientPreference(UserNutrientPreference newUserNutrientPreference) async {
+    final db = await database;
+
+    int result = await db.rawInsert(
+      'INSERT INTO user_nutrient_preference(userId, nutrientId, tracking_state, goal_amount) VALUES (?,?,?,?),',
+      [newUserNutrientPreference.userId, newUserNutrientPreference.nutrientId, newUserNutrientPreference.trackingState, newUserNutrientPreference.goalAmount]
+    );
+
+    return result;
+  }
+
+  Future<int> updateUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
+    final db = await database;
+
+    int result = await db.rawUpdate(
+      'UPDATE user_nutrient_preference'
+          'WHERE id = ?',
+      [userNutrientPreference.id]
+    );
+
+    return result;
+  }
+
+  Future<int> deleteUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
+    final db = await database;
+
+    int result = await db.rawDelete(
+      'DELETE FROM user_nutrient_preference'
+          'WHERE id = ?',
+      [userNutrientPreference.id]
+    );
+
+    return result;
   }
 }

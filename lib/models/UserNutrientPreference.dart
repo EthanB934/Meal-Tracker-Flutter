@@ -1,14 +1,14 @@
 class UserNutrientPreference {
   final int id;
-  final String name;
-  final String unit;
+  final int userId;
+  final int nutrientId;
   final String trackingState;
   final double goalAmount;
 
   UserNutrientPreference({
     required this.id,
-    required this.name,
-    required this.unit,
+    required this.userId,
+    required this.nutrientId,
     required this.trackingState,
     required this.goalAmount,
   });
@@ -16,8 +16,8 @@ class UserNutrientPreference {
   factory UserNutrientPreference.fromMap(Map<String, Object?> map) {
     return UserNutrientPreference(
       id: map['id'] as int,
-      name: map['name'] as String,
-      unit: map['unit'] as String,
+      userId: map['user_id'] as int,
+      nutrientId: map['nutrient_id'] as int,
       trackingState: map['tracking_state'] as String,
       goalAmount: map['goal_amount'] as double,
     );
