@@ -66,9 +66,9 @@ class NutrientTile extends HookWidget{
                           trackingState: selectedTrackingState,
                           goalAmount: goalValue
                       );
-                    }
 
-                    await DatabaseHelper().createUserNutrientPreference(newUserNutrientPreference);
+                      await DatabaseHelper().createUserNutrientPreference(newUserNutrientPreference);
+                    }
                   }
                   catch(e) {
                     ScaffoldMessenger.of(context).showSnackBar(
