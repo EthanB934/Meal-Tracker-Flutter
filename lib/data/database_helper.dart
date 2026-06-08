@@ -38,7 +38,7 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS meal ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                 'userId INTEGER NOT NULL,'
+                 'user_id INTEGER NOT NULL,'
                  'type TEXT NOT NULL,'
                  'createdAT TEXT NOT NULL, '
                  'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
@@ -46,7 +46,7 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS food ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                 'userId INTEGER NOT NULL,'
+                 'user_id INTEGER NOT NULL,'
                  'name TEXT NOT NULL, '
                  'cost INTEGER, '
                  'calories INTEGER, '
@@ -67,8 +67,8 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS meal_food ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                 'mealId INTEGER NOT NULL,'
-                 'foodId INTEGER NOT NULL,'
+                 'meal_id INTEGER NOT NULL,'
+                 'food_id INTEGER NOT NULL,'
                  'quantity INTEGER NOT NULL,'
                  'FOREIGN KEY (mealId) REFERENCES meal (id),'
                  'FOREIGN KEY (foodId) REFERENCES food (id))'
@@ -268,7 +268,7 @@ class DatabaseHelper {
     final db = await database;
 
     int result = await db.rawInsert(
-      'INSERT INTO user_nutrient_preference(userId, nutrientId, tracking_state, goal_amount) VALUES (?,?,?,?),',
+      'INSERT INTO user_nutrient_preference(user_id, nutrient_id, tracking_state, goal_amount) VALUES (?,?,?,?)',
       [newUserNutrientPreference.userId, newUserNutrientPreference.nutrientId, newUserNutrientPreference.trackingState, newUserNutrientPreference.goalAmount]
     );
 
@@ -279,21 +279,24 @@ class DatabaseHelper {
     final db = await database;
 
     int result = await db.rawUpdate(
-      'UPDATE user_nutrient_preference'
+      'UPDATE user_nutrient_preference '
+          'SET '
+          'tracking_state = ?, '
+          'goal_amount = ? '
           'WHERE id = ?',
-      [userNutrientPreference.id]
+      [userNutrientPreference.trackingState, userNutrientPreference.goalAmount, userNutrientPreference.id]
     );
 
     return result;
   }
 
-  Future<int> deleteUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
+  Future<int> deleteUserNutrientPreference(int userNutrientPreferenceId) async {
     final db = await database;
 
     int result = await db.rawDelete(
-      'DELETE FROM user_nutrient_preference'
+      'DELETE FROM user_nutrient_preference '
           'WHERE id = ?',
-      [userNutrientPreference.id]
+      [userNutrientPreferenceId]
     );
 
     return result;
