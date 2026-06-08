@@ -1,5 +1,5 @@
 import 'package:my_flutter_application/data/database_helper.dart';
-import 'package:my_flutter_application/models/userNutrientPreference.dart';
+import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -50,9 +50,6 @@ class NutrientService {
   }
 
   bool validateTrackingState(String userNutrientTrackingState) {
-    if(userNutrientTrackingState == "maximizing" || userNutrientTrackingState == "limiting") {
-      return true;
-    }
-    return false;
+    return userNutrientTrackingState == "maximizing" || userNutrientTrackingState == "limiting";
   }
 }

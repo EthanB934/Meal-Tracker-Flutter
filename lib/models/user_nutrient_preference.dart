@@ -1,12 +1,12 @@
 class UserNutrientPreference {
-  final int id;
+  final int? id;
   final int userId;
   final int nutrientId;
   final String trackingState;
   final double goalAmount;
 
   UserNutrientPreference({
-    required this.id,
+    this.id,
     required this.userId,
     required this.nutrientId,
     required this.trackingState,

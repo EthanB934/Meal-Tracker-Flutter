@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/widgets/nutrient_tile.dart';
+import 'package:collection/collection.dart';
 
 class UserPreferences extends HookWidget{
   const UserPreferences({super.key});
@@ -9,23 +11,35 @@ class UserPreferences extends HookWidget{
   @override
   Widget build(BuildContext build) {
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
-    final snapshot = useFuture(nutrientsFuture);
+    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
+    final nutrientSnapshot = useFuture(nutrientsFuture);
+    final userPreferencesSnapshot = useFuture(userPreferencesFuture);
 
-      if(snapshot.connectionState == ConnectionState.waiting) {
+      if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator(),),
         );
       }
 
-      if(snapshot.hasError) {
+      if(nutrientSnapshot.hasError) {
         return Scaffold(
           body: Center(
-            child: Text('Error: ${snapshot.error}'),
+            child: Text('Error: ${nutrientSnapshot.error}'),
           ),
         );
       }
 
-      final nutrients = snapshot.data ?? [];
+      if(userPreferencesSnapshot.hasError) {
+        return Scaffold(
+          body: Center(
+            child: Text('Error: ${userPreferencesSnapshot.error}')
+          ),
+        );
+      }
+
+      final nutrients = nutrientSnapshot.data ?? [];
+      final userPreferences = userPreferencesSnapshot.data ?? [];
+
 
       return Scaffold(
         appBar: AppBar(title: const Text('Nutrition Goals')),
@@ -35,9 +49,10 @@ class UserPreferences extends HookWidget{
               itemCount: nutrients.length,
               itemBuilder: (context, index) {
                 final nutrient = nutrients[index];
-                return ExpansionTile(
-                  title: Text(nutrient.name ?? ""),
-                  subtitle: Text(nutrient.unit ?? ""),
+                final userNutrientPreference = userPreferences.firstWhereOrNull((pref) => pref.nutrientId == nutrient.id);
+                return NutrientTile(
+                  nutrient: nutrient,
+                  preference: userNutrientPreference
                 );
             }
           )
