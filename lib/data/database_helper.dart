@@ -1,4 +1,4 @@
-import 'package:my_flutter_application/models/UserNutrientPreference.dart';
+import 'package:my_flutter_application/models/userNutrientPreference.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 class DatabaseHelper {

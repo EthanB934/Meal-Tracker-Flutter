@@ -1,5 +1,7 @@
 import 'package:my_flutter_application/data/database_helper.dart';
+import 'package:my_flutter_application/models/userNutrientPreference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
+import 'package:sqflite/sqflite.dart';
 
 /*
   Nutrient service is a layer between UI and Database. It handles requests to
@@ -13,5 +15,44 @@ class NutrientService {
   Future<List<Nutrient>> fetchNutrientsData() async {
     List<Map<String, Object?>> results = await DatabaseHelper().getNutrients();
     return results.map((map) => Nutrient.fromMap(map)).toList();
+  }
+
+  // Retrieves user nutrient preferences from database and maps results to user nutrient preference model
+  Future<List<UserNutrientPreference>> fetchUserPreferences() async {
+    List<Map<String, Object?>> results = await DatabaseHelper().getUserPreferences();
+    return results.map((map) => UserNutrientPreference.fromMap(map)).toList();
+  }
+
+  Future<int> createNewUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
+    bool validTrackingState = validateTrackingState(userNutrientPreference.trackingState);
+    if(validTrackingState) {
+      return await DatabaseHelper().createUserNutrientPreference(userNutrientPreference);
+    }
+    throw Exception("Invalid tracking state on create $validTrackingState");
+  }
+
+  Future<int> updateUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
+    bool validTrackingState = validateTrackingState(userNutrientPreference.trackingState);
+    if(validTrackingState) {
+      return await DatabaseHelper().updateUserNutrientPreference(userNutrientPreference);
+    }
+    throw Exception("Invalid tracking state on update $validTrackingState");
+  }
+
+  Future<int> deleteUserNutrientPreference(int userNutrientPreferenceId) async {
+    int result = await DatabaseHelper().deleteUserNutrientPreference(userNutrientPreferenceId);
+
+    if(result == 0) {
+      throw Exception("Failed to delete user nutrient preference $userNutrientPreferenceId");
+    }
+
+    return result;
+  }
+
+  bool validateTrackingState(String userNutrientTrackingState) {
+    if(userNutrientTrackingState == "maximizing" || userNutrientTrackingState == "limiting") {
+      return true;
+    }
+    return false;
   }
 }
