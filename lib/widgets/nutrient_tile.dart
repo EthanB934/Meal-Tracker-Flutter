@@ -55,13 +55,13 @@ class NutrientTile extends HookWidget{
                 onPressed: () async {
                   try {
                     final isFormValid = formKey.currentState!.validate();
-                    final selectedTrackingState = trackingState as String;
-                    final goalValue = goalAmountController as double;
+                    final selectedTrackingState = trackingState.value;
+                    final goalValue = double.tryParse(goalAmountController.text) as double;
                     final UserNutrientPreference newUserNutrientPreference;
 
                     if(isFormValid) {
                       newUserNutrientPreference = UserNutrientPreference(
-                          userId: 1,
+                          userId: 6,
                           nutrientId: nutrient.id,
                           trackingState: selectedTrackingState,
                           goalAmount: goalValue

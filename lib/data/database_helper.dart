@@ -38,7 +38,7 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS meal ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                 'user_id INTEGER NOT NULL,'
+                 'userId INTEGER NOT NULL,'
                  'type TEXT NOT NULL,'
                  'createdAT TEXT NOT NULL, '
                  'FOREIGN KEY (userId) REFERENCES user_profile (id)) '
@@ -46,7 +46,7 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS food ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                 'user_id INTEGER NOT NULL,'
+                 'userId INTEGER NOT NULL,'
                  'name TEXT NOT NULL, '
                  'cost INTEGER, '
                  'calories INTEGER, '
@@ -67,8 +67,8 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS meal_food ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                 'meal_id INTEGER NOT NULL,'
-                 'food_id INTEGER NOT NULL,'
+                 'mealId INTEGER NOT NULL,'
+                 'foodId INTEGER NOT NULL,'
                  'quantity INTEGER NOT NULL,'
                  'FOREIGN KEY (mealId) REFERENCES meal (id),'
                  'FOREIGN KEY (foodId) REFERENCES food (id))'
@@ -84,8 +84,8 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS user_nutrient_preference ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                 'user_id INTEGER NOT NULL,'
-                 'nutrient_id INTEGER NOT NULL,'
+                 'userId INTEGER NOT NULL,'
+                 'nutrientId INTEGER NOT NULL,'
                  'tracking_state TEXT NOT NULL DEFAULT \'untracked\','
                  'goal_amount REAL,'
                  'FOREIGN KEY (userId) REFERENCES user_profile (id),'
@@ -242,6 +242,16 @@ class DatabaseHelper {
     return user;
   }
 
+  Future<List<Map<String, Object?>>> getUser () async {
+    final db = await database;
+
+    List<Map<String, Object?>> user = await db.rawQuery(
+        'SELECT * FROM user_profile LIMIT 1'
+    );
+
+    return user;
+  }
+
   // Nutrient Data
   Future<List<Map<String,Object?>>> getNutrients () async {
     final db = await database;
@@ -268,7 +278,7 @@ class DatabaseHelper {
     final db = await database;
 
     int result = await db.rawInsert(
-      'INSERT INTO user_nutrient_preference(user_id, nutrient_id, tracking_state, goal_amount) VALUES (?,?,?,?)',
+      'INSERT INTO user_nutrient_preference(userId, nutrientId, tracking_state, goal_amount) VALUES (?,?,?,?)',
       [newUserNutrientPreference.userId, newUserNutrientPreference.nutrientId, newUserNutrientPreference.trackingState, newUserNutrientPreference.goalAmount]
     );
 

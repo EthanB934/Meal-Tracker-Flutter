@@ -15,15 +15,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper().initDatabase();
   bool userExists = await ProfileService().existingUser();
-
   // Required for onboarding testing
   if(userExists) {
     await ProfileService().deleteExistingUser();
     userExists = false;
   }
+  // Remove above section when onboarding flow is complete.
+
   runApp(MyApp(userExists: userExists));
 }
-  // Remove above section when onboarding flow is complete.
 
 class MyApp extends StatelessWidget {
   const MyApp({
