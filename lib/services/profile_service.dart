@@ -1,9 +1,14 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/user.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ProfileService {
   static User? _userProfile;
+
+  Future<User> fetchUserProfile() async {
+    List<Map<String, Object?>> user = await DatabaseHelper().getUser();
+    User userProfile = user.map((map) => User.fromMap(map)).first;
+    return userProfile;
+  }
 
   Future<int> createUserProfile(String name, DateTime dateOfBirth) async {
     String validName = validateName(name);
@@ -12,14 +17,12 @@ class ProfileService {
     return await DatabaseHelper().createUser(validName, validDate);
   }
 
-  Future<User> fetchUserProfile() async {
-    List<Map<String, Object?>> user = await DatabaseHelper().getUser();
-    User userProfile = user.map((map) => User.fromMap(map)) as User;
-    return userProfile;
+  Future<User?> get user async {
+    return _userProfile ??= await fetchUserProfile();
   }
 
-  Future<User> get user async {
-    return _userProfile ??= await fetchUserProfile();
+  User? getCachedUserProfile() {
+    return _userProfile;
   }
 
   String validateName(String name) {

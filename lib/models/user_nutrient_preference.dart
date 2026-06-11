@@ -16,8 +16,8 @@ class UserNutrientPreference {
   factory UserNutrientPreference.fromMap(Map<String, Object?> map) {
     return UserNutrientPreference(
       id: map['id'] as int,
-      userId: map['user_id'] as int,
-      nutrientId: map['nutrient_id'] as int,
+      userId: map['userId'] as int,
+      nutrientId: map['nutrientId'] as int,
       trackingState: map['tracking_state'] as String,
       goalAmount: map['goal_amount'] as double,
     );

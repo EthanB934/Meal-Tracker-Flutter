@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
+import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/services/profile_service.dart';
 
 class NutrientTile extends HookWidget{
   final Nutrient nutrient;
@@ -13,8 +14,30 @@ class NutrientTile extends HookWidget{
   @override
   Widget build(BuildContext context) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final trackingState = useState("untracked");
+    final trackingState = useState("maximizing");
     final goalAmountController = useTextEditingController();
+    final userSnapshot = useFuture(useMemoized(() => ProfileService().user));
+
+    if(userSnapshot.connectionState == ConnectionState.waiting) {
+      return Scaffold(
+        body: CircularProgressIndicator()
+      );
+    }
+
+    if(userSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${userSnapshot.error}'),
+        ),
+      );
+    }
+
+    if(userSnapshot.data == null) {
+      return const SizedBox.shrink();
+    }
+
+    final user = userSnapshot.data!;
+
     return ExpansionTile(
         title: Text(nutrient.name),
         subtitle: Text(nutrient.unit),
@@ -23,17 +46,19 @@ class NutrientTile extends HookWidget{
         key: formKey,
         child: Column(
           children: [
-            DropdownMenu(
-              onSelected: (option) {
-                if(option != trackingState) {
-                  trackingState.value = option;
+            DropdownMenu<String>(
+              onSelected: (String? option) {
+                if(option != trackingState.value) {
+                  trackingState.value = option as String;
                 }
               },
-                dropdownMenuEntries: <DropdownMenuEntry>[
-                  DropdownMenuEntry(value: "maximizing", label: "Maximize"),
-                  DropdownMenuEntry(value: "limiting", label: "Limit"),
-                  DropdownMenuEntry(value: "untracked", label: "Untrack")
-            ]),
+                dropdownMenuEntries: <DropdownMenuEntry<String>>[
+                  DropdownMenuEntry<String>(value: "maximizing", label: "Maximize"),
+                  DropdownMenuEntry<String>(value: "limiting", label: "Limit"),
+                  DropdownMenuEntry<String>(value: "untracked", label: "Untrack")
+            ],
+            initialSelection: "maximizing"
+              ,),
             TextFormField(
               controller: goalAmountController,
               decoration: const InputDecoration(labelText: "Goal"),
@@ -56,18 +81,17 @@ class NutrientTile extends HookWidget{
                   try {
                     final isFormValid = formKey.currentState!.validate();
                     final selectedTrackingState = trackingState.value;
-                    final goalValue = double.tryParse(goalAmountController.text) as double;
+                    final goalValue = double.tryParse(goalAmountController.text)!;
                     final UserNutrientPreference newUserNutrientPreference;
 
                     if(isFormValid) {
                       newUserNutrientPreference = UserNutrientPreference(
-                          userId: 6,
+                          userId: user!.id,
                           nutrientId: nutrient.id,
                           trackingState: selectedTrackingState,
                           goalAmount: goalValue
                       );
-
-                      await DatabaseHelper().createUserNutrientPreference(newUserNutrientPreference);
+                      await NutrientService().createNewUserNutrientPreference(newUserNutrientPreference);
                     }
                   }
                   catch(e) {
