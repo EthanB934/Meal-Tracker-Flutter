@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
-import 'package:my_flutter_application/widgets/nutrient_tile.dart';
+import 'package:my_flutter_application/widgets/tracked_nutrient_tile.dart';
+import 'package:my_flutter_application/widgets/untracked_nutrient_tile.dart';
 import 'package:collection/collection.dart';
 
 class UserPreferences extends HookWidget{
@@ -43,20 +44,39 @@ class UserPreferences extends HookWidget{
 
       return Scaffold(
         appBar: AppBar(title: const Text('Nutrition Goals')),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView.builder(
-              itemCount: nutrients.length,
-              itemBuilder: (context, index) {
-                final nutrient = nutrients[index];
-                final userNutrientPreference = userPreferences.firstWhereOrNull((pref) => pref.nutrientId == nutrient.id);
-                return NutrientTile(
-                  nutrient: nutrient,
-                  preference: userNutrientPreference
-                );
-            }
-          )
-        ),
+        body: Column(
+          children: [
+            Text('Active Priorities'),
+            Expanded(
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: nutrients.length,
+                        itemBuilder: (context, index) {
+                          if(userPreferences.isEmpty) {
+                            return Scaffold(
+                              body: const Text("No Priorities"),
+                            );
+                          }
+                          final nutrient = nutrients[index];
+                          final userNutrientPreference = userPreferences.firstWhere((pref) => pref.nutrientId == nutrient.id);
+                          return TrackedNutrientTile(nutrient: nutrient, preference: userNutrientPreference);
+                        }
+                    ),
+                ),
+            Text('Untracked Nutrients'),
+            Expanded(
+              child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: nutrients.length,
+                      itemBuilder: (context, index) {
+                        final nutrient = nutrients[index];
+                        final userNutrientPreference = userPreferences.firstWhereOrNull((pref) => pref.nutrientId == nutrient.id);
+                        return UntrackedNutrientTile(nutrient: nutrient, preference: userNutrientPreference);
+                    }
+                ),
+            ),
+        ]
+        )
       );
     }
   }

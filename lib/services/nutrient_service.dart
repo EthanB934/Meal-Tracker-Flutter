@@ -1,7 +1,6 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
-import 'package:sqflite/sqflite.dart';
 
 /*
   Nutrient service is a layer between UI and Database. It handles requests to

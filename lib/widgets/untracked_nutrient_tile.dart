@@ -5,11 +5,11 @@ import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
 
-class NutrientTile extends HookWidget{
+class UntrackedNutrientTile extends HookWidget{
   final Nutrient nutrient;
   final UserNutrientPreference? preference;
 
-  const NutrientTile({super.key, required this.nutrient, this.preference});
+  const UntrackedNutrientTile({super.key, required this.nutrient, this.preference});
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +86,17 @@ class NutrientTile extends HookWidget{
 
                     if(isFormValid) {
                       newUserNutrientPreference = UserNutrientPreference(
-                          userId: user!.id,
+                          userId: user.id,
                           nutrientId: nutrient.id,
                           trackingState: selectedTrackingState,
                           goalAmount: goalValue
                       );
-                      await NutrientService().createNewUserNutrientPreference(newUserNutrientPreference);
+
+                      int result = await NutrientService().createNewUserNutrientPreference(newUserNutrientPreference);
+
+                      if(result > 0) {
+                        await NutrientService().fetchUserPreferences();
+                      }
                     }
                   }
                   catch(e) {
