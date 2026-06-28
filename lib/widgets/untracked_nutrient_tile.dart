@@ -8,8 +8,9 @@ import 'package:my_flutter_application/services/profile_service.dart';
 class UntrackedNutrientTile extends HookWidget{
   final Nutrient nutrient;
   final UserNutrientPreference? preference;
+  final VoidCallback onPreferenceSaved;
 
-  const UntrackedNutrientTile({super.key, required this.nutrient, this.preference});
+  const UntrackedNutrientTile({super.key, required this.nutrient, this.preference, required this.onPreferenceSaved});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +96,7 @@ class UntrackedNutrientTile extends HookWidget{
                       int result = await NutrientService().createNewUserNutrientPreference(newUserNutrientPreference);
 
                       if(result > 0) {
-                        await NutrientService().fetchUserPreferences();
+                        onPreferenceSaved();
                       }
                     }
                   }

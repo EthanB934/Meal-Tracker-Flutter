@@ -37,17 +37,11 @@ class TrackedNutrientTile extends HookWidget{
 
     final user = userSnapshot.data!;
 
-    return Scaffold(
-      body: Column(
-        children: [
-          ListTile(
+    return ListTile(
             leading: CircleAvatar(backgroundColor: preference.trackingState == "maximizing" ? Colors.green : Colors.red,),
             title: Text(nutrient.name),
             subtitle: Text(preference.trackingState),
             trailing: Text("${preference.goalAmount} ${nutrient.unit}"),
-          )
-        ],
-      )
     );
   }
 }

@@ -11,10 +11,15 @@ class UserPreferences extends HookWidget{
 
   @override
   Widget build(BuildContext build) {
+    final refreshKey = useState(0);
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
-    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
+    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences(), [refreshKey.value]);
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
+
+    void refreshPreferences() {
+      refreshKey.value++;
+    }
 
       if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
         return const Scaffold(
@@ -40,7 +45,12 @@ class UserPreferences extends HookWidget{
 
       final nutrients = nutrientSnapshot.data ?? [];
       final userPreferences = userPreferencesSnapshot.data ?? [];
+      final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
+      final untrackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId != nutrient.id)).toList();
 
+      if(userPreferences.isEmpty) {
+        return const Center(child: Text("No Priorities"),);
+      }
 
       return Scaffold(
         appBar: AppBar(title: const Text('Nutrition Goals')),
@@ -50,16 +60,11 @@ class UserPreferences extends HookWidget{
             Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: nutrients.length,
+                        itemCount: trackedNutrients.length,
                         itemBuilder: (context, index) {
-                          if(userPreferences.isEmpty) {
-                            return Scaffold(
-                              body: const Text("No Priorities"),
-                            );
-                          }
-                          final nutrient = nutrients[index];
-                          final userNutrientPreference = userPreferences.firstWhere((pref) => pref.nutrientId == nutrient.id);
-                          return TrackedNutrientTile(nutrient: nutrient, preference: userNutrientPreference);
+                          final nutrient = trackedNutrients[index];
+                          final preference = userPreferences.firstWhere((preference) => preference.nutrientId == nutrient.id);
+                          return TrackedNutrientTile(nutrient: nutrient, preference: preference);
                         }
                     ),
                 ),
@@ -67,11 +72,10 @@ class UserPreferences extends HookWidget{
             Expanded(
               child: ListView.builder(
                       scrollDirection: Axis.vertical,
-                      itemCount: nutrients.length,
+                      itemCount: untrackedNutrients.length,
                       itemBuilder: (context, index) {
                         final nutrient = nutrients[index];
-                        final userNutrientPreference = userPreferences.firstWhereOrNull((pref) => pref.nutrientId == nutrient.id);
-                        return UntrackedNutrientTile(nutrient: nutrient, preference: userNutrientPreference);
+                        return UntrackedNutrientTile(nutrient: nutrient, preference: null, onPreferenceSaved: refreshPreferences,);
                     }
                 ),
             ),
