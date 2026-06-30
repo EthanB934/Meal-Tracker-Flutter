@@ -36,6 +36,7 @@ class UntrackedNutrientTile extends HookWidget{
     return ExpansionTile(
         title: Text(nutrient.name),
         subtitle: Text(nutrient.unit),
+        controller: ExpansibleController(),
         children: [
           Form(
         key: formKey,
@@ -100,12 +101,6 @@ class UntrackedNutrientTile extends HookWidget{
                   }
                 },
                 child: const Text("Save")
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  ExpansibleController().collapse();
-                },
-                child: const Text("Close")
             ),
           ],
             ),
