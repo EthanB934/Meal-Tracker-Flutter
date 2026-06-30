@@ -28,12 +28,9 @@ class UserPreferencesForm extends HookWidget{
     final allEntries = <DropdownMenuEntry<String>>[
       DropdownMenuEntry<String>(value: "maximizing", label: "Maximize"),
       DropdownMenuEntry<String>(value: "limiting", label: "Limit"),
-      DropdownMenuEntry<String>(value: "untracked", label: "Untrack")
     ];
 
-    final availableEntries = preference == null
-    ? allEntries.where((entry) => entry.value != "untracked").toList()
-        : allEntries.where((entry) => entry.value != preference?.trackingState).toList();
+    final currentSelection = allEntries.where((entry) => entry.value == trackingState.value);
 
     return Form(
         key: formKey,
@@ -46,8 +43,8 @@ class UserPreferencesForm extends HookWidget{
                     trackingState.value = option as String;
                   }
                 },
-                dropdownMenuEntries: availableEntries,
-                initialSelection: availableEntries.first.value
+                dropdownMenuEntries: allEntries,
+                initialSelection: currentSelection.isEmpty ? "maximizing" : currentSelection.first.value
               ),
 
               TextFormField(
@@ -67,7 +64,8 @@ class UserPreferencesForm extends HookWidget{
                 },
               ),
 
-              ElevatedButton(
+              preference == null
+              ? ElevatedButton(
                   child: const Text("Save"),
                   onPressed: () async {
                     try {
@@ -100,8 +98,63 @@ class UserPreferencesForm extends HookWidget{
                       );
                     }
                   }
-              ),
-            ]
+              )
+                  : Row(
+                    children: [
+                      ElevatedButton(
+                          child: const Text("Update Preference"),
+                          onPressed: () async {
+                            try {
+                              final isFormValid = formKey.currentState!.validate();
+                              final selectedTrackingState = trackingState.value;
+                              final goalValue = double.tryParse(
+                                  goalAmountController.text)!;
+                              final UserNutrientPreference updatedUserNutrientPreference;
+
+                              if (isFormValid) {
+                                updatedUserNutrientPreference = UserNutrientPreference(
+                                    id: preference!.id,
+                                    userId: user.id,
+                                    nutrientId: nutrient.id,
+                                    trackingState: selectedTrackingState,
+                                    goalAmount: goalValue
+                                );
+
+                                int result = await NutrientService().updateUserNutrientPreference(updatedUserNutrientPreference);
+
+                                if (result > 0) {
+                                  onPreferenceSaved();
+                                }
+                              }
+                            }
+                            catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString()))
+                              );
+                            }
+                          }
+                      ),
+                      ElevatedButton(
+                          child: const Text("Delete Preference"),
+                          onPressed: () async {
+                            final userNutrientPreferenceId = preference!.id;
+                            try {
+                              int result = await NutrientService().deleteUserNutrientPreference(userNutrientPreferenceId!);
+
+                                if (result > 0) {
+                                  onPreferenceSaved();
+                                }
+                              }
+                            catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString()))
+                              );
+                            }
+                          }
+                      )
+                    ]
+                  )
+              ]
         )
     );
   }

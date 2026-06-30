@@ -287,6 +287,13 @@ class DatabaseHelper {
 
   Future<int> updateUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
     final db = await database;
+    print(
+      'Tracking State: ${userNutrientPreference.trackingState}\n'
+      'Goal Amount: ${userNutrientPreference.goalAmount}\n'
+      'User Id: ${userNutrientPreference.userId}\n'
+      'Nutrient Id: ${userNutrientPreference.nutrientId}\n'
+      'Preference Id: ${userNutrientPreference.id}\n'
+    );
 
     int result = await db.rawUpdate(
       'UPDATE user_nutrient_preference '
