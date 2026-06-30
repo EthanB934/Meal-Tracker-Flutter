@@ -10,7 +10,7 @@ class UserPreferences extends HookWidget{
   const UserPreferences({super.key});
 
   @override
-  Widget build(BuildContext build) {
+  Widget build(BuildContext context) {
     final refreshPreferencesKey = useState(0);
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences(), [refreshPreferencesKey.value]);
@@ -87,7 +87,7 @@ class UserPreferences extends HookWidget{
                           MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
                       );
                     },
-                    child: Text("Finish Setup")
+                    child: Text("Finish Preferences Setup")
                 )
             )
         ]
