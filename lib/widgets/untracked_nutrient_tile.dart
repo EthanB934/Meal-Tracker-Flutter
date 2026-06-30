@@ -50,7 +50,6 @@ class UntrackedNutrientTile extends HookWidget{
                 dropdownMenuEntries: <DropdownMenuEntry<String>>[
                   DropdownMenuEntry<String>(value: "maximizing", label: "Maximize"),
                   DropdownMenuEntry<String>(value: "limiting", label: "Limit"),
-                  DropdownMenuEntry<String>(value: "untracked", label: "Untrack")
             ],
             initialSelection: "maximizing"
               ,),

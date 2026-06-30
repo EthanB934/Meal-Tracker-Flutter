@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/widgets/tracked_nutrient_tile.dart';
 import 'package:my_flutter_application/widgets/untracked_nutrient_tile.dart';
@@ -77,6 +78,18 @@ class UserPreferences extends HookWidget{
                     }
                 ),
             ),
+            Visibility(
+              visible: trackedNutrients.isNotEmpty ? true : false,
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
+                      );
+                    },
+                    child: Text("Finish Setup")
+                )
+            )
         ]
         )
       );
