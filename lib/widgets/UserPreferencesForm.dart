@@ -22,8 +22,8 @@ class UserPreferencesForm extends HookWidget{
   @override
   Widget build(BuildContext context) {
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final goalAmountController = useTextEditingController();
-    final trackingState = useState(preference?.trackingState ?? "untracked");
+    final goalAmountController = useTextEditingController(text: preference?.goalAmount != null ? '${preference?.goalAmount}' : '0.0');
+    final trackingState = useState(preference?.trackingState ?? "maximizing");
 
     final allEntries = <DropdownMenuEntry<String>>[
       DropdownMenuEntry<String>(value: "maximizing", label: "Maximize"),
