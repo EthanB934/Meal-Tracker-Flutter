@@ -4,21 +4,20 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/widgets/tracked_nutrient_tile.dart';
 import 'package:my_flutter_application/widgets/untracked_nutrient_tile.dart';
-import 'package:collection/collection.dart';
 
 class UserPreferences extends HookWidget{
   const UserPreferences({super.key});
 
   @override
   Widget build(BuildContext build) {
-    final refreshKey = useState(0);
+    final refreshPreferencesKey = useState(0);
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
-    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences(), [refreshKey.value]);
+    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences(), [refreshPreferencesKey.value]);
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
 
     void refreshPreferences() {
-      refreshKey.value++;
+      refreshPreferencesKey.value++;
     }
 
       if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
@@ -46,18 +45,17 @@ class UserPreferences extends HookWidget{
       final nutrients = nutrientSnapshot.data ?? [];
       final userPreferences = userPreferencesSnapshot.data ?? [];
       final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
-      final untrackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId != nutrient.id)).toList();
+      final untrackedNutrients = nutrients.where((nutrient) => userPreferences.every((preference) => preference.nutrientId != nutrient.id)).toList();
 
-      if(userPreferences.isEmpty) {
-        return const Center(child: Text("No Priorities"),);
-      }
 
       return Scaffold(
         appBar: AppBar(title: const Text('Nutrition Goals')),
         body: Column(
           children: [
             Text('Active Priorities'),
-            Expanded(
+            trackedNutrients.isEmpty
+                ? Center(child: Text('No Active Priorities'),)
+                : Expanded(
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: trackedNutrients.length,
@@ -74,7 +72,7 @@ class UserPreferences extends HookWidget{
                       scrollDirection: Axis.vertical,
                       itemCount: untrackedNutrients.length,
                       itemBuilder: (context, index) {
-                        final nutrient = nutrients[index];
+                        final nutrient = untrackedNutrients[index];
                         return UntrackedNutrientTile(nutrient: nutrient, preference: null, onPreferenceSaved: refreshPreferences,);
                     }
                 ),

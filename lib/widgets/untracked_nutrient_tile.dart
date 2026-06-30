@@ -20,17 +20,11 @@ class UntrackedNutrientTile extends HookWidget{
     final userSnapshot = useFuture(useMemoized(() => ProfileService().user));
 
     if(userSnapshot.connectionState == ConnectionState.waiting) {
-      return Scaffold(
-        body: CircularProgressIndicator()
-      );
+      return CircularProgressIndicator();
     }
 
     if(userSnapshot.hasError) {
-      return Scaffold(
-        body: Center(
-          child: Text('Error: ${userSnapshot.error}'),
-        ),
-      );
+      return Center(child: Text('Error: ${userSnapshot.error}'),);
     }
 
     if(userSnapshot.data == null) {
