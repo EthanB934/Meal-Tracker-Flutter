@@ -1,4 +1,5 @@
 import 'package:my_flutter_application/data/database_helper.dart';
+import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 
@@ -14,6 +15,11 @@ class NutrientService {
   Future<List<Nutrient>> fetchNutrientsData() async {
     List<Map<String, Object?>> results = await DatabaseHelper().getNutrients();
     return results.map((map) => Nutrient.fromMap(map)).toList();
+  }
+
+  Future<bool> userHasPreferences(int userId) async {
+    bool result = await DatabaseHelper().userNutrient(userId);
+    return result;
   }
 
   // Retrieves user nutrient preferences from database and maps results to user nutrient preference model

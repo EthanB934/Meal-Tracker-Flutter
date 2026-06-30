@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
-import 'package:my_flutter_application/widgets/UserPreferencesForm.dart';
+import 'package:my_flutter_application/widgets/user_preferences_form.dart';
 
 
 class UntrackedNutrientTile extends HookWidget {

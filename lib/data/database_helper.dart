@@ -263,6 +263,19 @@ class DatabaseHelper {
     return nutrients;
   }
 
+  Future<bool> userNutrient (int userId) async {
+    final db = await database;
+
+    List<Map<String, Object?>> userHasNutrientRelationship = await db.rawQuery(
+        'SELECT * FROM user_nutrient_preference '
+            'WHERE userId = ? '
+            'LIMIT 1 ',
+      [userId]
+    );
+
+    return userHasNutrientRelationship.isNotEmpty;
+  }
+
   // User Nutrient Preference Data
   Future<List<Map<String, Object?>>> getUserPreferences() async {
     final db = await database;

@@ -103,7 +103,7 @@ class UserPreferences extends HookWidget{
                     onPressed: () {
                       Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute<void>(builder: (BuildContext context) => const HomeScreen()),
+                          MaterialPageRoute<void>(builder: (BuildContext context) => HomeScreen(user: user,)),
                       );
                     },
                     child: Text("Finish Preferences Setup")

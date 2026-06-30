@@ -4,7 +4,7 @@ import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
-import 'package:my_flutter_application/widgets/UserPreferencesForm.dart';
+import 'package:my_flutter_application/widgets/user_preferences_form.dart';
 
 class TrackedNutrientTile extends HookWidget{
   final Nutrient nutrient;
