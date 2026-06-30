@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/services/profile_service.dart';
 import 'package:my_flutter_application/widgets/tracked_nutrient_tile.dart';
 import 'package:my_flutter_application/widgets/untracked_nutrient_tile.dart';
 
@@ -16,33 +17,51 @@ class UserPreferences extends HookWidget{
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences(), [refreshPreferencesKey.value]);
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
+    final userSnapshot = useFuture(useMemoized(() => ProfileService().user));
 
-    void refreshPreferences() {
-      refreshPreferencesKey.value++;
+    if(userSnapshot.connectionState == ConnectionState.waiting) {
+      return Scaffold(
+          body: CircularProgressIndicator()
+      );
     }
 
-      if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator(),),
-        );
-      }
+    if(userSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${userSnapshot.error}'),
+        ),
+      );
+    }
 
-      if(nutrientSnapshot.hasError) {
-        return Scaffold(
-          body: Center(
-            child: Text('Error: ${nutrientSnapshot.error}'),
-          ),
-        );
-      }
+    if(userSnapshot.data == null) {
+      return const SizedBox.shrink();
+    }
+    if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(),),
+      );
+    }
 
-      if(userPreferencesSnapshot.hasError) {
-        return Scaffold(
-          body: Center(
-            child: Text('Error: ${userPreferencesSnapshot.error}')
-          ),
-        );
-      }
+    if(nutrientSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${nutrientSnapshot.error}'),
+        ),
+      );
+    }
 
+    if(userPreferencesSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${userPreferencesSnapshot.error}')
+        ),
+      );
+    }
+
+      void refreshPreferences() {
+        refreshPreferencesKey.value++;
+      }
+      final user = userSnapshot.data!;
       final nutrients = nutrientSnapshot.data ?? [];
       final userPreferences = userPreferencesSnapshot.data ?? [];
       final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
@@ -63,7 +82,7 @@ class UserPreferences extends HookWidget{
                         itemBuilder: (context, index) {
                           final nutrient = trackedNutrients[index];
                           final preference = userPreferences.firstWhere((preference) => preference.nutrientId == nutrient.id);
-                          return TrackedNutrientTile(nutrient: nutrient, preference: preference);
+                          return TrackedNutrientTile(nutrient: nutrient, preference: preference, onPreferenceSaved: refreshPreferences, user: user,);
                         }
                     ),
                 ),
@@ -74,7 +93,7 @@ class UserPreferences extends HookWidget{
                       itemCount: untrackedNutrients.length,
                       itemBuilder: (context, index) {
                         final nutrient = untrackedNutrients[index];
-                        return UntrackedNutrientTile(nutrient: nutrient, preference: null, onPreferenceSaved: refreshPreferences,);
+                        return UntrackedNutrientTile(nutrient: nutrient, preference: null, onPreferenceSaved: refreshPreferences, user: user,);
                     }
                 ),
             ),
