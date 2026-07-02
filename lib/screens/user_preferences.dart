@@ -10,6 +10,29 @@ import 'package:my_flutter_application/widgets/untracked_nutrient_tile.dart';
 class UserPreferences extends HookWidget{
   const UserPreferences({super.key});
 
+  /*
+    The User Preferences screen. This screen is displayed at two points in the
+    Meal Tracker App:
+      1. When a first time user creates their user profile.
+      2. WHen an existing user wishes to update their preferences.
+    The user preferences screen contains two lists:
+      1. A list of nutrients that are not tracked by the user.
+      2. A list of nutrients that are tracked by the user.
+     Each list has a form with behavior that depends on the user's tracking status
+     of that nutrient. If a relationship exists, the user may update or delete that
+     tracked nutrient from that list. If one does not, then the user may create a
+     tracking relationship with that nutrient.
+     All create, read, update, and delete operations are performed in real time when
+     the user submits either form to the database.
+
+     With first time users, the user may not navigate past the user preferences screen
+     until at least one relationship is created (some of the later UI elements are
+     dependent upon the user's relationships). If the user closes the app after creating
+     their profile, but does not create any preference relationship: upon return, they
+     will be redirected to the user preferences screen until at least one relationship
+     exists.
+  */
+
   @override
   Widget build(BuildContext context) {
     final refreshPreferencesKey = useState(0);
