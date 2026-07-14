@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
     if(userExists && userHasPreferences) {
       return MaterialApp(
         title: 'Meal Tracker',
-        home: HomeScreen(user: user,)
+        home: HomeScreen(user: user!,)
       );
     }
 
