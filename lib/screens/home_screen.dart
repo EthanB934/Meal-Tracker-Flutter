@@ -77,56 +77,36 @@ class HomeScreen extends HookWidget {
     required this.user
   });
 
-  final NutrientService _nutrientService = NutrientService();
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dynamic>( // Changed to dynamic as we will combine lists
-      future: _nutrientService.fetchUserPreferences(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error fetching preferences: ${snapshot.error}'));
-        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final preferences = snapshot.data!;
+    final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
+    final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
+    final nutrientSnapshot = useFuture(nutrientsFuture);
+    final userPreferencesSnapshot = useFuture(userPreferencesFuture);
 
-          final nutrients = await _nutrientService.fetchNutrientsData();
+    if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(),),
+      );
+    }
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(Greeting().greet()),
-            ),
-            body: ListView.builder(
-              itemCount: preferences.length,
-              itemBuilder: (context, index) {
-                final preference = preferences[index];
-                final Nutrient? nutrient = nutrients.firstWhere(
-                        (n) => n.id == preference.nutrientId, // Provide a default if not found, though it should exist
-                );
+    if(nutrientSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text('Error: ${nutrientSnapshot.error}'),
+        ),
+      );
+    }
 
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text('${nutrient?.name ?? 'N/A'}'), // Display nutrient name
-                    subtitle: Text('Goal Amount: ${preference.goalAmount}'), // Display goal amount
-                    trailing: Text('ID: ${preference.id}'),
-                  ),
-                );
-              },
-            ),
-          );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(Greeting().greet()),
-            ),
-            body: const Center(
-              child: Text('No user nutrient preferences found.'),
-            ),
-          );
-        }
-      },
-    );
+    if(userPreferencesSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+            child: Text('Error: ${userPreferencesSnapshot.error}')
+        ),
+      );
+    }
+
+    final nutrients = nutrientSnapshot.data ?? [];
+    final userPreferences = userPreferencesSnapshot.data ?? [];
+    final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
   }
-}
