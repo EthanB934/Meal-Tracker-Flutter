@@ -109,4 +109,27 @@ class HomeScreen extends HookWidget {
     final nutrients = nutrientSnapshot.data ?? [];
     final userPreferences = userPreferencesSnapshot.data ?? [];
     final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(Greeting().greet()),
+      ),
+      body: ListView.builder(
+        itemCount: userPreferences.length,
+        itemBuilder: (context, index) {
+          final preference = userPreferences[index];
+          final Nutrient? nutrient = nutrients.firstWhere(
+                (n) => n.id == preference.nutrientId
+          );
+          return Card(
+            margin: const EdgeInsets.all(8.0),
+            child: ListTile(
+              title: Text('${nutrient?.name ?? 'N/A'}'), // Display nutrient name
+              trailing: Text('${preference.goalAmount} ${nutrient?.unit}'), // Display goal amount,
+            ),
+          );
+        },
+      ),
+    );
   }
+}
