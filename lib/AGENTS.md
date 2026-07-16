@@ -1,7 +1,7 @@
 # The Master File
 @./AGENTS.md 
 
-The AGENTS markdown file is responsible for detailing the overall architecture of the
+The AGENTS Markdown file is responsible for detailing the overall architecture of the
 Flutter app, concerning the mobile app's development of the library directory which
 includes these following files along with some overview details about them.
 
@@ -11,69 +11,19 @@ includes these following files along with some overview details about them.
 The lib directory contains screens, widgets, utilities, models, data, and services.
 
 ## Data
-@./lib/data
-
-The data folder hosts the database helper module. The database helper module contains
-a class which creates a static instance of the database, method members which run SQL
-queries to create the database with all relevant tables, and other method members which
-interact with a given table's resource, whether creating, reading, updating, or deleting.
-At the moment, not every resource has dedicated CRUD support, most of which will be developed
-as the project continues.
-
-Please Note: The current architecture pattern is not to call any method member directly from
-the database from a screen. There is a layer between the UI and the data which covers validation
-and response to and from the UI and data. For example, if a query in the database results in a
-failure, the layer in-between the data and UI layer will respond to the UI layer with that failure
-to communicate to the user what went wrong where.
+@./lib/data/data.md
 
 ## Models
-@./lib/models
+@./lib/models/models.md
 
-The model files, @./lib/models/*.dart describe how SQL queries which returns a list of
-database records should be mapped according to the data types used in the project. These models
-are generally used in the service files of the same name where the database records need to be
-mapped to real data types used in the project. To avoid confusion about what data types are being
-used in the development of screens or widgets.
-
-## Screens
-@./lib/screens
-
-The screens directory contains the files which describe the UI to be rendered in the mobile app.
-These are the core of the project, are the source from which users make requests for data and their
-various operations. Each screen serves a unique purpose, though they may be created with reusable
-components, track transient state before submission to the database, or pull from the database to 
-display current state of records in the UI to the user.
+## Srceens
+@./lib/screens/screens.md
 
 ## Services
-@./lib/services
-
-The services directory is the layer between the UI layer and the data layer as mentioned in data
-section. These files contain validation logic, handle responses to and from either layer, mapping
-database records to dart-typed models. Much of the additional logic not found in the Screens
-directory will be found in here. Overall the flow generally follows this path:
-
-    Data -> Services -> Screens
-
-Screens depends on methods in services, services depends on methods in data.
+@./lib/services/services.md
 
 ## Utilities
-@./lib/utils
-
-The utilities directory is filled with helper functions. This a new directory and does not
-contain many utilities at the moment. However, an example is already provided in the utils
-file, which is to get the current time of day to render a specific greeting to a user. 
-Logic like this will be stored in the utilities folder, generally, containing logic that
-the screens directory depends on, but there is no need for an additional call to a service
-layer file or data layer file. The utilities perform some off-hand calculation that is used
-in the screens rendering.
+@./lib/utils/utilities.md
 
 ## Widgets
-@./lib/widgets
-
-The widgets directory contains customized widgets. Sometimes, Flutter-provided widgets are not
-enough. They may need to be customized to behave in a particular way under a given set of 
-circumstances. The current modules contained in the widgets directory is a great example. These
-custom widgets are consumed by the onboarding screen file. Depending on whether a user has a
-relationship with a nutrient or not, a different kind of ExpanisionTile widget is rendered in 
-an according list. These may or may not be rare, it simply depends on the behavior that the 
-project requires a Flutter-provided widget to be overridden for a particular use case.
+@./lib/widgets/widgets.md
