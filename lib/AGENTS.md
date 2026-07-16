@@ -56,4 +56,24 @@ directory will be found in here. Overall the flow generally follows this path:
 
 Screens depends on methods in services, services depends on methods in data.
 
+## Utilities
+@./lib/utils
 
+The utilities directory is filled with helper functions. This a new directory and does not
+contain many utilities at the moment. However, an example is already provided in the utils
+file, which is to get the current time of day to render a specific greeting to a user. 
+Logic like this will be stored in the utilities folder, generally, containing logic that
+the screens directory depends on, but there is no need for an additional call to a service
+layer file or data layer file. The utilities perform some off-hand calculation that is used
+in the screens rendering.
+
+## Widgets
+@./lib/widgets
+
+The widgets directory contains customized widgets. Sometimes, Flutter-provided widgets are not
+enough. They may need to be customized to behave in a particular way under a given set of 
+circumstances. The current modules contained in the widgets directory is a great example. These
+custom widgets are consumed by the onboarding screen file. Depending on whether a user has a
+relationship with a nutrient or not, a different kind of ExpanisionTile widget is rendered in 
+an according list. These may or may not be rare, it simply depends on the behavior that the 
+project requires a Flutter-provided widget to be overridden for a particular use case.
