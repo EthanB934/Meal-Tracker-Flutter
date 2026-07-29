@@ -51,28 +51,27 @@ class HomeScreen extends HookWidget {
       appBar: AppBar(
         title: Text(Greeting().greet()),
       ),
-      body: ListView.builder(
-        itemCount: userPreferences.length,
-        itemBuilder: (context, index) {
-          final preference = userPreferences[index];
-          final Nutrient nutrient = nutrients.firstWhere(
-                (n) => n.id == preference.nutrientId
-          );
+      body: Card(
+        child: ListView.builder(
+          itemCount: userPreferences.length,
+          itemBuilder: (context, index) {
+            final preference = userPreferences[index];
+            final Nutrient nutrient = nutrients.firstWhere(
+                    (n) => n.id == preference.nutrientId
+            );
 
-          final double currentAmount = 10.0;
+            final double currentAmount = 9.75;
 
-          return Card(
-              margin: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 500,
+            return SizedBox(
+                height: 100,
                 width: double.infinity,
-                  child: ListTile(
+                child: ListTile(
                     title: Text(nutrient.name),
                     subtitle: Text('${FloorToDecimal().floorToDecimal(((preference.goalAmount - currentAmount)).toDouble(), 2)} remaining'),
                     trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
                       Text('$currentAmount ${nutrient.unit} / ${preference.goalAmount} ${nutrient.unit}'),
                       SizedBox(
                         height: 10,
@@ -82,12 +81,12 @@ class HomeScreen extends HookWidget {
                         ),
                       ),
                     ]
-                ),
+                )
               )
-            )
-          );
-      },
-      ),
+            );
+          },
+        ),
+      )
     );
   }
 }

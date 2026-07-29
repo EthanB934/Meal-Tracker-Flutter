@@ -1,8 +1,11 @@
 class FloorToDecimal {
   double floorToDecimal(double x, int places) {
-    double mod = (10 * places).toDouble();
-    double flooredDecimal = (x * mod).floor() / mod;
+    int mod = 10 * places;
 
-    return flooredDecimal.toDouble();
+    double modifiedDouble = x * mod;
+
+    final double finalNumber = modifiedDouble / mod;
+
+    return finalNumber;
   }
 }

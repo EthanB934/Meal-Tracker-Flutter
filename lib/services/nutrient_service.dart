@@ -17,6 +17,7 @@ class NutrientService {
     return results.map((map) => Nutrient.fromMap(map)).toList();
   }
 
+
   Future<bool> userHasPreferences(int userId) async {
     bool result = await DatabaseHelper().userNutrient(userId);
     return result;
