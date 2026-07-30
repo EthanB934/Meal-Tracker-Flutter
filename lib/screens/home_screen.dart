@@ -5,6 +5,7 @@ import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/utils/floorToDecimal.dart';
 import 'package:my_flutter_application/utils/greeting.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/widgets/mealModal.dart';
 import 'package:path/path.dart';
 
 class HomeScreen extends HookWidget {
@@ -109,7 +110,7 @@ class HomeScreen extends HookWidget {
 
 
             ElevatedButton(
-                onPressed: () {},
+                onPressed: () => _dialogBuilder(context),
                 child: Text("Create New Meal")
             )
           ],
@@ -117,4 +118,14 @@ class HomeScreen extends HookWidget {
         )
     );
   }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return MealModal(user: user);
+      }
+    );
+  }
 }
+
