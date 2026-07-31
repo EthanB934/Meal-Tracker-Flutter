@@ -6,7 +6,7 @@ import 'package:my_flutter_application/screens/food_library.dart';
 import 'package:my_flutter_application/utils/floorToDecimal.dart';
 import 'package:my_flutter_application/utils/greeting.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
-import 'package:my_flutter_application/widgets/mealModal.dart';
+import 'package:my_flutter_application/widgets/meal_modal.dart';
 import 'package:path/path.dart';
 
 class HomeScreen extends HookWidget {
