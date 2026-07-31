@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/models/user.dart';
+import 'package:my_flutter_application/screens/food_library.dart';
 import 'package:my_flutter_application/utils/floorToDecimal.dart';
 import 'package:my_flutter_application/utils/greeting.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
@@ -53,7 +54,12 @@ class HomeScreen extends HookWidget {
           title: Text(Greeting().greet()),
           actions: [
             FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (BuildContext context) => FoodLibrary())
+                );
+              },
           )
         ],
       ),
