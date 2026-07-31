@@ -1,3 +1,4 @@
+import 'package:my_flutter_application/models/food.dart';
 import 'package:my_flutter_application/models/meal.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:sqflite/sqflite.dart';
@@ -372,6 +373,81 @@ class DatabaseHelper {
           'WHERE'
           'id = ? ',
       [mealId]
+    );
+
+    return result;
+  }
+
+//   Food data
+
+  Future<List<Map<String, Object?>>> fetchFood() async {
+    final db = await database;
+    List<Map<String, Object?>> results = await db.rawQuery(
+      'SELECT * FROM food '
+    );
+
+    return results;
+  }
+
+  Future<int> createFood(Food food) async {
+    final db = await database;
+
+    int result = await db.rawInsert(''
+        'INSERT INTO food VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?',
+        [
+          food.id, food.name, food.userId,
+          food.calcium, food.calories, food.cholesterol,
+          food.cost, food.fiber, food.iron,
+          food.potassium, food.protein, food.saturatedFat,
+          food.sodium, food.totalCarbohydrates, food.totalFat,
+          food.totalSugars, food.vitaminD
+        ]
+    );
+
+    return result;
+  }
+
+  Future<int> updateFood(Food food) async {
+    final db = await database;
+
+    int result = await db.rawUpdate(
+        'UPDATE '
+            'SET '
+            'name = ? '
+            'calcium = ? '
+            'calories = ? '
+            'cholesterol = ? '
+            'cost = ? '
+            'fiber = ? '
+            'iron = ? '
+            'potassium = ? '
+            'protein = ? '
+            'saturated_fat = ? '
+            'sodium = ? '
+            'total_carbohydrates = ? '
+            'total_fat = ? '
+            'total_sugars = ? '
+            'vitamin_d = ? '
+            'WHERE id = ? ',
+        [
+          food.calcium, food.calories, food.cholesterol,
+          food.cost, food.fiber, food.iron,
+          food.potassium, food.protein, food.saturatedFat,
+          food.sodium, food.totalCarbohydrates, food.totalFat,
+          food.totalSugars, food.vitaminD, food.id
+        ]
+    );
+
+    return result;
+  }
+
+  Future<int> deleteFood (foodId) async {
+    final db = await database;
+
+    int result = await db.rawDelete(
+        'DELETE FROM food '
+            'WHERE id = ? ',
+        [foodId]
     );
 
     return result;
