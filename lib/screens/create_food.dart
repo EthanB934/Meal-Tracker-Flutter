@@ -51,7 +51,7 @@ class CreateFood extends HookWidget{
 
           Text("YOUR PRIORITIES"),
           SizedBox(
-            height: (MediaQuery.heightOf(context) / 4) * 3,
+            height: (MediaQuery.heightOf(context) / 4) * 1,
             width: MediaQuery.widthOf(context) / 2,
             child: ListView.builder(
               itemCount: trackedNutrients.length,
@@ -70,8 +70,29 @@ class CreateFood extends HookWidget{
             ),
           ),
 
-          Text("ADDITIONAL NUTRIENTS"),
+          ExpansionTile(
+            title: Text("ADDITIONAL NUTRIENTS"),
+            children: [
+              SizedBox(
+                height:MediaQuery.heightOf(context) / 2,
+                child: ListView.builder(
+                    itemCount: untrackedNutrients.length,
+                    itemBuilder: (context, index) {
+                      final untrackedNutrient = untrackedNutrients[index];
 
+                      return Column(
+                        children: [
+                          TextFormField(
+                            controller: nutrientValue,
+                            decoration: InputDecoration(labelText: untrackedNutrient.name),
+                          )
+                        ],
+                      );
+                    }
+                ),
+              )
+            ],
+          )
         ],
       )
     );
