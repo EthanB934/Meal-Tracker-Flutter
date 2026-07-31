@@ -50,7 +50,7 @@ class DatabaseHelper {
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
                  'userId INTEGER NOT NULL,'
                  'name TEXT NOT NULL, '
-                 'cost INTEGER, '
+                 'cost REAL, '
                  'calories INTEGER, '
                  'total_fat INTEGER, '
                  'sodium INTEGER,'

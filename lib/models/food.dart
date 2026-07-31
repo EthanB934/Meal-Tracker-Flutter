@@ -5,7 +5,7 @@ class Food {
   final int? calcium;
   final int? calories;
   final int? cholesterol;
-  final int? cost;
+  final double? cost;
   final int? fiber;
   final int? iron;
   final int? potassium;
@@ -45,7 +45,7 @@ class Food {
       calcium: map['calcium'] as int,
       calories: map['calories'] as int,
       cholesterol: map['cholesterol'] as int,
-      cost: map['cost'] as int,
+      cost: map['cost'] as double,
       fiber: map['fiber'] as int,
       iron: map['iron'] as int,
       potassium: map['potassium'] as int,

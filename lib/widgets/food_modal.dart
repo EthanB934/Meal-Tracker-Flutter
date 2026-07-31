@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/screens/create_food.dart';
 
 class FoodModal extends HookWidget {
 
@@ -12,7 +13,6 @@ class FoodModal extends HookWidget {
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final foodNameController = TextEditingController();
     final costController = TextEditingController();
-    final caloriesController = TextEditingController();
 
     return Scaffold(
       body: SizedBox(
@@ -38,19 +38,22 @@ class FoodModal extends HookWidget {
                     controller: costController,
                     decoration: const InputDecoration(labelText: "Cost"),
                   ),
-
-                  TextFormField(
-                    controller: caloriesController,
-                    decoration: const InputDecoration(labelText: "Calories"),
-                  ),
-
-                  ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Continue ->")
-                  )
                 ],
               ),
             )
+          ),
+
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(builder: (BuildContext context) => CreateFood(
+                    name: foodNameController.text,
+                    cost: double.parse(costController.text),
+                  ))
+                );
+              },
+              child: Text("Continue ->")
           )
         ],
       ),
