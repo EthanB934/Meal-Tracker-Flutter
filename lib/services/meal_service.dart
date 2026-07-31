@@ -42,6 +42,16 @@ class MealService {
     return result;
   }
 
+  Future<int> deleteMeal(int mealId) async {
+    int result = await DatabaseHelper().deleteMeal(mealId);
+
+    if(result == 0) {
+      throw Exception("There was an error deleting meal $mealId. Meal $mealId may not exist");
+    }
+
+    return result;
+  }
+
   bool validateMealType(String mealType) {
     List validMealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
