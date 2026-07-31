@@ -1,5 +1,6 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/user.dart';
+import 'package:my_flutter_application/utils/format_date.dart';
 
 class ProfileService {
   static User? _userProfile;
@@ -36,13 +37,9 @@ class ProfileService {
 
     return name;
   }
-
-  String formatDate(DateTime date) {
-    String year = date.year.toString();
-    String month = date.month.toString().padLeft(2, '0');
-    String day = date.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
+String formatDate(DateTime date) {
+    return FormatDate().trimTimeStamp(date);
+}
 
   Future<bool> existingUser() async {
     return await DatabaseHelper().userExists();

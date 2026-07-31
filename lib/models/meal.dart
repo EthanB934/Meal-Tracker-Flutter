@@ -2,7 +2,7 @@ class Meal {
   final int id;
   final int userId;
   final String type;
-  final DateTime createdAt;
+  String createdAt;
 
   Meal({
     required this.id,
@@ -16,7 +16,7 @@ class Meal {
       id: map['id'] as int,
       userId: map['userId'] as int,
       type: map['type'] as String,
-      createdAt: map['createdAt'] as DateTime
+      createdAt: map['createdAt'] as String
     );
   }
 }

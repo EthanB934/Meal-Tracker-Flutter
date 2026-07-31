@@ -1,3 +1,4 @@
+import 'package:my_flutter_application/models/meal.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -337,7 +338,7 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<int> createMeal (newMeal)  async {
+  Future<int> createMeal (Meal newMeal)  async {
     final db = await database;
 
     int result = await db.rawInsert(
@@ -348,7 +349,7 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<int> updateMeal(meal) async {
+  Future<int> updateMeal(Meal meal) async {
     final db = await database;
 
     int result = await db.rawUpdate(
@@ -363,7 +364,7 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<int> deleteMeal(mealId) async {
+  Future<int> deleteMeal(int mealId) async {
     final db = await database;
 
     int result = await db.rawDelete(
