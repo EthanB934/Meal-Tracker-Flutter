@@ -300,13 +300,6 @@ class DatabaseHelper {
 
   Future<int> updateUserNutrientPreference(UserNutrientPreference userNutrientPreference) async {
     final db = await database;
-    print(
-      'Tracking State: ${userNutrientPreference.trackingState}\n'
-      'Goal Amount: ${userNutrientPreference.goalAmount}\n'
-      'User Id: ${userNutrientPreference.userId}\n'
-      'Nutrient Id: ${userNutrientPreference.nutrientId}\n'
-      'Preference Id: ${userNutrientPreference.id}\n'
-    );
 
     int result = await db.rawUpdate(
       'UPDATE user_nutrient_preference '
@@ -327,6 +320,57 @@ class DatabaseHelper {
       'DELETE FROM user_nutrient_preference '
           'WHERE id = ?',
       [userNutrientPreferenceId]
+    );
+
+    return result;
+  }
+
+//   Meal Data
+
+  Future<List<Map<String, Object?>>> fetchMeals() async {
+    final db = await database;
+
+    List<Map<String, Object?>> result = await db.rawQuery(
+      'SELECT * FROM meal '
+    );
+
+    return result;
+  }
+
+  Future<int> createMeal (newMeal)  async {
+    final db = await database;
+
+    int result = await db.rawInsert(
+      'INSERT INTO meal VALUES (?, ?, ?) ',
+      [newMeal.userId, newMeal.type, newMeal.createdAt]
+    );
+
+    return result;
+  }
+
+  Future<int> updateMeal(meal) async {
+    final db = await database;
+
+    int result = await db.rawUpdate(
+      'UPDATE meal '
+          'SET '
+          'type = ? '
+          'WHERE '
+          'id = ? ',
+      [meal.type, meal.id]
+    );
+
+    return result;
+  }
+
+  Future<int> deleteMeal(mealId) async {
+    final db = await database;
+
+    int result = await db.rawDelete(
+      'DELETE FROM meal '
+          'WHERE'
+          'id = ? ',
+      [mealId]
     );
 
     return result;
