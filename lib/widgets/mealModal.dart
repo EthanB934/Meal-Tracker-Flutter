@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/user.dart';
-import 'package:my_flutter_application/screens/meal_creation_form.dart';
+import 'package:my_flutter_application/screens/meal_creation.dart';
 
 class MealModal extends HookWidget {
   final User user;

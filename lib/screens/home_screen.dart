@@ -50,11 +50,18 @@ class HomeScreen extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(Greeting().greet()),
+          title: Text(Greeting().greet()),
+          actions: [
+            FloatingActionButton(
+              onPressed: () {},
+          )
+        ],
       ),
         body: Column(
           children: [
+
             Text("Nutritional Summary"),
+
             SizedBox(
               height: 300,
               child: Card(
