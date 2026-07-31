@@ -26,6 +26,22 @@ class MealService {
     return result;
   }
 
+  Future<int> updateMeal(Meal meal) async {
+    bool isValid = validateMealType(meal.type);
+
+    if(!isValid) {
+      throw Exception("${meal.type} is not a valid option");
+    }
+
+    int result = await DatabaseHelper().updateMeal(meal);
+
+    if(result == 0) {
+      throw Exception("There was an error updating meal ${meal.id}");
+    }
+
+    return result;
+  }
+
   bool validateMealType(String mealType) {
     List validMealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
