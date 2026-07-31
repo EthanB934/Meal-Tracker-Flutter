@@ -57,10 +57,24 @@ class FoodLibrary extends HookWidget {
               },
             ),
 
+          ),
+
+          ElevatedButton(
+              onPressed: () => _dialogBuilder(context),
+              child: Text(" + Add New Food")
           )
 
         ],
       )
+    );
+  }
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return FoodModal();
+        }
     );
   }
 }
