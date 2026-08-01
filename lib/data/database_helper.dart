@@ -113,72 +113,72 @@ class DatabaseHelper {
     final batch = db.batch();
     batch.execute(
         'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
-        ["calories", "kcal"]
+        ["Calories", "kcal"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["protein"]
+        ["Protein"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["total_carbohydrate"]
+        ["Total Carbohydrate"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["dietary_fiber"]
+        ["Dietary Fiber"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["total_fat"]
+        ["Total Fat"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["saturated_fat"]
+        ["Saturated Fat"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["trans_fat"]
+        ["Trans Fat"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
-        ["cholesterol", "mg"]
+        ["Cholesterol", "mg"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["sodium"]
+        ["Sodium"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["total_sugars"]
+        ["Total Sugars"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["added_sugars"]
+        ["Added Sugars"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
-        ["calcium", "mg"]
+        ["Calcium", "mg"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
-        ["iron", "mg"]
+        ["Iron", "mg"]
     );
 
     batch.execute(
         'INSERT INTO nutrient(name, unit) VALUES (?, ?)',
-        ["potassium", "mg"]
+        ["Potassium", "mg"]
     );
 
     batch.execute(
