@@ -48,22 +48,30 @@ class DatabaseHelper {
          await db.execute(
              'CREATE TABLE IF NOT EXISTS food ('
                  'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-                 'userId INTEGER NOT NULL,'
-                 'name TEXT NOT NULL, '
                  'cost REAL, '
-                 'calories INTEGER, '
-                 'total_fat INTEGER, '
-                 'sodium INTEGER,'
-                 'total_carbohydrates INTEGER,'
-                 'total_sugars INTEGER,'
-                 'protein INTEGER,'
-                 'saturated_fat INTEGER,'
-                 'cholesterol INTEGER,'
-                 'fiber INTEGER,'
-                 'vitamin_d INTEGER,'
-                 'calcium INTEGER,'
-                 'potassium INTEGER,'
-                 'iron INTEGER,'
+                 'name TEXT NOT NULL, '
+                 'userId INTEGER NOT NULL,'
+                 'added_sugars, REAL'
+                 'calcium REAL,'
+                 'calories REAL, '
+                 'cholesterol REAL, '
+                 'dietary_fiber REAL, '
+                 'iron REAL,'
+                 'potassium REAL,'
+                 'protein REAL, '
+                 'saturated_fat REAL,'
+                 'sodium REAL,'
+                 'total_carbohydrates REAL,'
+                 'total_fat REAL, '
+                 'trans_fat REAL, '
+                 'total_sugars REAL, '
+                 'vitamin_a REAL,'
+                 'vitamin_b6 REAL,'
+                 'vitamin_b12 REAL, '
+                 'vitamin_c REAL,'
+                 'vitamin_d REAL, '
+                 'vitamin_e REAL, '
+                 'vitamin_k REAL, '
                  'FOREIGN KEY (userId) REFERENCES user_profile (id))'
          );
          await db.execute(
@@ -294,7 +302,12 @@ class DatabaseHelper {
 
     int result = await db.rawInsert(
       'INSERT INTO user_nutrient_preference(userId, nutrientId, tracking_state, goal_amount) VALUES (?,?,?,?)',
-      [newUserNutrientPreference.userId, newUserNutrientPreference.nutrientId, newUserNutrientPreference.trackingState, newUserNutrientPreference.goalAmount]
+      [
+        newUserNutrientPreference.userId,
+        newUserNutrientPreference.nutrientId,
+        newUserNutrientPreference.trackingState,
+        newUserNutrientPreference.goalAmount
+      ]
     );
 
     return result;
@@ -393,14 +406,16 @@ class DatabaseHelper {
     final db = await database;
 
     int result = await db.rawInsert(''
-        'INSERT INTO food VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?',
+        'INSERT INTO food VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
-          food.id, food.name, food.userId,
-          food.calcium, food.calories, food.cholesterol,
-          food.cost, food.fiber, food.iron,
+          food.id, food.cost, food.name, food.userId,
+          food.addedSugars, food.calcium, food.calories,
+          food.cholesterol, food.dietaryFiber, food.iron,
           food.potassium, food.protein, food.saturatedFat,
           food.sodium, food.totalCarbohydrates, food.totalFat,
-          food.totalSugars, food.vitaminD
+          food.totalSugars, food.transFat, food.vitaminA,
+          food.vitaminB6, food.vitaminB12, food.vitaminC,
+          food.vitaminD, food.vitaminE, food.vitaminK
         ]
     );
 
@@ -413,35 +428,47 @@ class DatabaseHelper {
     int result = await db.rawUpdate(
         'UPDATE '
             'SET '
-            'name = ? '
-            'calcium = ? '
-            'calories = ? '
-            'cholesterol = ? '
-            'cost = ? '
-            'fiber = ? '
-            'iron = ? '
-            'potassium = ? '
-            'protein = ? '
-            'saturated_fat = ? '
-            'sodium = ? '
-            'total_carbohydrates = ? '
-            'total_fat = ? '
-            'total_sugars = ? '
-            'vitamin_d = ? '
+            'cost = ?, '
+            'name = ?, '
+            'added_sugars = ?, '
+            'calcium = ?, '
+            'calories = ?, '
+            'cholesterol = ?, '
+            'dietary_fiber = ?, '
+            'iron = ?, '
+            'potassium = ?, '
+            'protein = ?, '
+            'saturated_fat = ?, '
+            'sodium = ?, '
+            'total_carbohydrates = ?, '
+            'total_fat = ?, '
+            'total_sugars = ?,'
+            'trans_fat = ?,'
+            'vitamin_a = ?, '
+            'vitamin_b6 = ?, '
+            'vitamin_b12 =?, '
+            'vitamin_c = ?, '
+            'vitamin_d = ?, '
+            'vitamin_e = ?, '
+            'vitamin_k = ? '
             'WHERE id = ? ',
         [
-          food.calcium, food.calories, food.cholesterol,
-          food.cost, food.fiber, food.iron,
+          food.cost, food.name,
+          food.addedSugars, food.calcium, food.calories,
+          food.cholesterol, food.dietaryFiber, food.iron,
           food.potassium, food.protein, food.saturatedFat,
           food.sodium, food.totalCarbohydrates, food.totalFat,
-          food.totalSugars, food.vitaminD, food.id
+          food.totalSugars, food.transFat, food.vitaminA,
+          food.vitaminB6, food.vitaminB12, food.vitaminC,
+          food.vitaminD, food.vitaminE, food.vitaminK,
+          food.id
         ]
     );
 
     return result;
   }
 
-  Future<int> deleteFood (foodId) async {
+  Future<int> deleteFood (int foodId) async {
     final db = await database;
 
     int result = await db.rawDelete(
