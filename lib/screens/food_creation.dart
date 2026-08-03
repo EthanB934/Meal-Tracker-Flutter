@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/widgets/nutrient_text_form_field.dart';
 
@@ -20,7 +21,7 @@ class CreateFood extends HookWidget{
       "name": name,
       "cost": cost
     });
-
+    final nutrientsListLoaded = useState<bool>(false);
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
     final nutrientsSnapshot = useFuture(nutrientsFuture);
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
@@ -49,6 +50,22 @@ class CreateFood extends HookWidget{
     }
 
     final nutrients = nutrientsSnapshot.data ?? [];
+
+    useEffect(() {
+      if(!nutrientsListLoaded.value && nutrients.isNotEmpty) {
+        final List<Nutrient> nutrients = nutrientsSnapshot.data!;
+        for(int i = 0; i < nutrients.length; i++) {
+          updateFoodState(nutrients[i].name, null);
+        }
+
+      nutrientsListLoaded.value = true;
+
+      };
+
+
+      return null;
+    }, [nutrientsSnapshot.hasData]);
+
     final userPreferences = userPreferencesSnapshot.data ?? [];
     final trackedNutrients = nutrients.where((nutrient) => userPreferences.any((preference) => preference.nutrientId == nutrient.id)).toList();
     final untrackedNutrients = nutrients.where((nutrient) => userPreferences.every((preference) => preference.nutrientId != nutrient.id)).toList();
