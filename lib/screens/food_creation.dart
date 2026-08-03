@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/widgets/nutrient_text_form_field.dart';
 
 class CreateFood extends HookWidget{
   final String name;
@@ -12,14 +13,22 @@ class CreateFood extends HookWidget{
     this.cost,
   });
 
+
   @override
   Widget build(BuildContext context) {
-    final nutrientFormKey = useMemoized(() => GlobalKey<FormState>());
-    final nutrientValue = TextEditingController();
+    final newFood = useState<Map<String, dynamic>>({
+      "name": name,
+      "cost": cost
+    });
+
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
     final nutrientsSnapshot = useFuture(nutrientsFuture);
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
+
+    void updateFoodState (String name, double? value) {
+        newFood.value = {...newFood.value, name: value};
+    }
 
     if(nutrientsSnapshot.connectionState == ConnectionState.waiting || nutrientsSnapshot.connectionState == ConnectionState.waiting) {
       return Scaffold(
@@ -51,7 +60,7 @@ class CreateFood extends HookWidget{
 
           Text("YOUR PRIORITIES"),
           SizedBox(
-            height: (MediaQuery.heightOf(context) / 4) * 1,
+            height: (MediaQuery.heightOf(context) / 4) * 0.5,
             width: MediaQuery.widthOf(context) / 2,
             child: ListView.builder(
               itemCount: trackedNutrients.length,
@@ -60,10 +69,7 @@ class CreateFood extends HookWidget{
 
                 return Column(
                     children: [
-                      TextFormField(
-                        controller: nutrientValue,
-                        decoration: InputDecoration(labelText: trackedNutrient.name),
-                      )
+                      NutrientTextFormField(nutrientName: trackedNutrient.name, updateFoodState: updateFoodState,),
                     ],
                 );
               },
@@ -82,16 +88,23 @@ class CreateFood extends HookWidget{
 
                       return Column(
                         children: [
-                          TextFormField(
-                            controller: nutrientValue,
-                            decoration: InputDecoration(labelText: untrackedNutrient.name),
-                          )
+                          NutrientTextFormField(nutrientName: untrackedNutrient.name, updateFoodState: updateFoodState,),
                         ],
                       );
                     }
                 ),
               )
             ],
+          ),
+
+          ElevatedButton(
+              onPressed: () {
+                print(
+                    "Food to be created: "
+                        "${newFood.value}"
+                );
+              },
+              child: Text("Save Food")
           )
         ],
       )
