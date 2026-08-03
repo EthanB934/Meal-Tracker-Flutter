@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
+import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/widgets/nutrient_text_form_field.dart';
 
@@ -62,7 +63,6 @@ class CreateFood extends HookWidget{
 
       };
 
-
       return null;
     }, [nutrientsSnapshot.hasData]);
 
@@ -116,10 +116,7 @@ class CreateFood extends HookWidget{
 
           ElevatedButton(
               onPressed: () {
-                print(
-                    "Food to be created: "
-                        "${newFood.value}"
-                );
+                FoodService().createFood(newFood.value);
               },
               child: Text("Save Food")
           )

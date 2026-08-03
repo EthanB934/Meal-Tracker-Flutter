@@ -402,24 +402,17 @@ class DatabaseHelper {
     return results;
   }
 
-  Future<int> createFood(Food food) async {
+  Future<int> createFood(Map<String, dynamic> food) async {
     final db = await database;
 
-    int result = await db.rawInsert(''
-        'INSERT INTO food VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [
-          food.id, food.cost, food.name, food.userId,
-          food.addedSugars, food.calcium, food.calories,
-          food.cholesterol, food.dietaryFiber, food.iron,
-          food.potassium, food.protein, food.saturatedFat,
-          food.sodium, food.totalCarbohydrates, food.totalFat,
-          food.totalSugars, food.transFat, food.vitaminA,
-          food.vitaminB6, food.vitaminB12, food.vitaminC,
-          food.vitaminD, food.vitaminE, food.vitaminK
-        ]
-    );
-
+    try {
+    int result = await db.insert("food", food, conflictAlgorithm: ConflictAlgorithm.abort);
     return result;
+
+    }
+    on DatabaseException catch(e) {
+      throw Exception('There was an issue submitting ${food['name']} into the database: ${e.toString()}');
+    }
   }
 
   Future<int> updateFood(Food food) async {
@@ -479,4 +472,6 @@ class DatabaseHelper {
 
     return result;
   }
+
+
 }

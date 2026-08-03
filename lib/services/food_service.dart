@@ -8,11 +8,11 @@ class FoodService {
     return results.map((result) => Food.fromMap(result)).toList();
   }
 
-  Future<int> createFood(Food food) async {
+  Future<int> createFood(Map<String, dynamic> food) async {
     int result = await DatabaseHelper().createFood(food);
 
     if(result == 0) {
-      throw Exception("There was an error creating food item ${food.name}");
+      throw Exception("There was an error creating food item ${food['name']}");
     }
 
     return result;
