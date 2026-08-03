@@ -17,7 +17,6 @@ class NutrientTextFormField extends HookWidget{
 
     void captureString(String value) {
 
-       print(value);
        updateFoodState(nutrientName, double.tryParse(nutrientTextFormFieldController.text));
     }
 

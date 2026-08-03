@@ -125,7 +125,6 @@ class CreateFood extends HookWidget{
           ElevatedButton(
               onPressed: () async {
                 final result = await FoodService().createFood(newFood.value);
-                print(result);
               },
               child: Text("Save Food")
           )
