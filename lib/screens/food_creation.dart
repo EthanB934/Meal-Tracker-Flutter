@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
+import 'package:my_flutter_application/screens/food_library.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
@@ -125,6 +126,17 @@ class CreateFood extends HookWidget{
           ElevatedButton(
               onPressed: () async {
                 final result = await FoodService().createFood(newFood.value);
+
+                if(result == 0) {
+                  throw Exception("There was an error submitting ${newFood.value['name']} into the database");
+                }
+
+                if(context.mounted) {
+                  return Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(builder: (BuildContext context) => const FoodLibrary())
+                  );
+                }
               },
               child: Text("Save Food")
           )
