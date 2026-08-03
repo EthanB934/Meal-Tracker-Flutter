@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/services/profile_service.dart';
+import 'package:my_flutter_application/utils/format_nutrient_name.dart';
 import 'package:my_flutter_application/widgets/nutrient_text_form_field.dart';
 
 class CreateFood extends HookWidget{
@@ -18,10 +20,14 @@ class CreateFood extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
+    final user = ProfileService().cachedUser;
+
     final newFood = useState<Map<String, dynamic>>({
       "name": name,
-      "cost": cost
+      "cost": cost,
+      "userId": user.id,
     });
+
     final nutrientsListLoaded = useState<bool>(false);
     final nutrientsFuture = useMemoized(() => NutrientService().fetchNutrientsData());
     final nutrientsSnapshot = useFuture(nutrientsFuture);
@@ -29,7 +35,9 @@ class CreateFood extends HookWidget{
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
 
     void updateFoodState (String name, double? value) {
-        newFood.value = {...newFood.value, name: value};
+      final databaseName = FormatNutrientName().formatNutrientName(name);
+      print(databaseName);
+        newFood.value = {...newFood.value, databaseName: value};
     }
 
     if(nutrientsSnapshot.connectionState == ConnectionState.waiting || nutrientsSnapshot.connectionState == ConnectionState.waiting) {
@@ -56,12 +64,12 @@ class CreateFood extends HookWidget{
       if(!nutrientsListLoaded.value && nutrients.isNotEmpty) {
         final List<Nutrient> nutrients = nutrientsSnapshot.data!;
         for(int i = 0; i < nutrients.length; i++) {
-          updateFoodState(nutrients[i].name, null);
+          updateFoodState(nutrients[i].name, 0.0);
         }
 
       nutrientsListLoaded.value = true;
 
-      };
+      }
 
       return null;
     }, [nutrientsSnapshot.hasData]);
@@ -115,8 +123,9 @@ class CreateFood extends HookWidget{
           ),
 
           ElevatedButton(
-              onPressed: () {
-                FoodService().createFood(newFood.value);
+              onPressed: () async {
+                final result = await FoodService().createFood(newFood.value);
+                print(result);
               },
               child: Text("Save Food")
           )

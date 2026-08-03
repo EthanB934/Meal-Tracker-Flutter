@@ -51,7 +51,7 @@ class DatabaseHelper {
                  'cost REAL, '
                  'name TEXT NOT NULL, '
                  'userId INTEGER NOT NULL,'
-                 'added_sugars, REAL'
+                 'added_sugars REAL,'
                  'calcium REAL,'
                  'calories REAL, '
                  'cholesterol REAL, '
@@ -123,7 +123,7 @@ class DatabaseHelper {
 
     batch.execute(
         'INSERT INTO nutrient(name) VALUES (?)',
-        ["Total Carbohydrate"]
+        ["Total Carbohydrates"]
     );
 
     batch.execute(

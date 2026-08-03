@@ -4,6 +4,7 @@ import 'package:my_flutter_application/utils/format_date.dart';
 
 class ProfileService {
   static User? _userProfile;
+  static final User _cachedUserProfile = _userProfile!;
 
   Future<User?> fetchUserProfile() async {
     List<Map<String, Object?>> user = await DatabaseHelper().getUser();
@@ -24,6 +25,10 @@ class ProfileService {
 
   Future<User?> get user async {
     return _userProfile ??= await fetchUserProfile();
+  }
+
+  User get cachedUser {
+    return _cachedUserProfile;
   }
 
   String validateName(String name) {
