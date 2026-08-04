@@ -75,16 +75,21 @@ class MealCreationForm extends HookWidget {
               itemBuilder: (context, index) {
                   final foodItem = food[index];
                   return ListTile(
-                      title: Text("${foodItem.name} 0", textAlign: TextAlign.center,),
+                    title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
+                      isThreeLine: true,
+                      subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           FloatingActionButton.small(
+                            child: Text("+"),
                               onPressed: () {
                                 addFood(foodItem.id);
                               }
                           ),
+
                           FloatingActionButton.small(
+                            child: Text("-"),
                               onPressed: () {
                                 removeFood(foodItem.id);
                               }
