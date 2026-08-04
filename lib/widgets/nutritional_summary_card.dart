@@ -20,8 +20,8 @@ class NutritionalSummaryCard extends HookWidget{
     if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
       return Scaffold(
         body: SizedBox(
-          height: MediaQuery.heightOf(context),
-          width: MediaQuery.widthOf(context),
+          height: MediaQuery.heightOf(context) / 2,
+          width: MediaQuery.widthOf(context) /2,
           child: Center(
             child: CircularProgressIndicator(),    
           ),
@@ -31,17 +31,27 @@ class NutritionalSummaryCard extends HookWidget{
 
     if(nutrientSnapshot.hasError) {
       return Scaffold(
-        body: Center(
-          child: Text('Error: ${nutrientSnapshot.error}'),
-        ),
+        body: SizedBox(
+          height: MediaQuery.heightOf(context) / 2,
+          width: MediaQuery.widthOf(context) /2,
+          child: Center(
+            child: Text('Error: ${nutrientSnapshot.error}'),
+          ),
+        )
+
       );
     }
 
     if(userPreferencesSnapshot.hasError) {
       return Scaffold(
-        body: Center(
-            child: Text('Error: ${userPreferencesSnapshot.error}')
-        ),
+        body: SizedBox(
+          height: MediaQuery.heightOf(context) / 2,
+          width: MediaQuery.widthOf(context) /2,
+          child: Center(
+              child: Text('Error: ${userPreferencesSnapshot.error}')
+          ),
+        )
+        ,
       );
     }
 

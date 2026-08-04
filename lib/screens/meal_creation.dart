@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:my_flutter_application/models/food.dart';
-import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/screens/review_meal.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
@@ -60,64 +58,74 @@ class MealCreationForm extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text("Add Foods"),),
-      body: Column(
-        children: [
-          SizedBox(
-            height: (MediaQuery.heightOf(context) / 4) * 3,
-            width: MediaQuery.widthOf(context),
-            child: food.isEmpty
-            ? SizedBox(
-              height: MediaQuery.heightOf(context) / 2,
-              width: MediaQuery.widthOf(context) / 2,
-              child: Center(child: Text("No food items found"),),
+      body: SizedBox(
+        height: MediaQuery.heightOf(context),
+        width: MediaQuery.widthOf(context),
+        child: Column(
+          children: [
+            SizedBox(
+              height: (MediaQuery.heightOf(context) / 4) *3,
+              width: double.infinity,
+              child: food.isEmpty
+              ? SizedBox(
+                height: MediaQuery.heightOf(context) / 2,
+                width: double.infinity,
+                child: Center(child: Text("No food items found"),),
+                )
+                 : Column (
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.heightOf(context) / 2,
+                        width: double.infinity,
+                        child: ListView.builder(
+                            itemCount: food.length,
+                            itemBuilder: (context, index) {
+                              final foodItem = food[index];
+                              return ListTile(
+                                  title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
+                                  isThreeLine: true,
+                                  subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      FloatingActionButton.small(
+                                          heroTag: "addFoodItem",
+                                          child: Text("+"),
+                                          onPressed: () {
+                                            addFood(foodItem.id);
+                                          }
+                                      ),
+
+                                      FloatingActionButton.small(
+                                          heroTag: "removeFoodItem",
+                                          child: Text("-"),
+                                          onPressed: () {
+                                            removeFood(foodItem.id);
+                                          }
+                                      ),
+                                    ],
+                                  )
+                              );
+                            }
+                        ),
+                      ),
+
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodQuantity: foodAndQuantity.value))
+                          );
+                        },
+                        child: Text("Review Meal ->"),
+                      ),
+                    ],
               )
-               : Column (
-                  children: [
-                    ListView.builder(
-                      itemCount: food.length,
-                      itemBuilder: (context, index) {
-                          final foodItem = food[index];
-                          return ListTile(
-                            title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
-                              isThreeLine: true,
-                              subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  FloatingActionButton.small(
-                                    child: Text("+"),
-                                      onPressed: () {
-                                        addFood(foodItem.id);
-                                      }
-                                  ),
+            ),
 
-                                  FloatingActionButton.small(
-                                    child: Text("-"),
-                                      onPressed: () {
-                                        removeFood(foodItem.id);
-                                      }
-                                  ),
-                                ],
-                              )
-                            );
-                        }
-                    ),
-
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodQuantity: foodAndQuantity.value))
-                        );
-                      },
-                      child: Text("Review Meal ->"),
-                    ),
-                  ],
-            )
-          ),
-
-        ],
-      )
+          ],
+        ),
+      ),
     );
   }
 }

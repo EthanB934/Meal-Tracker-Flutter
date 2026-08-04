@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/widgets/nutritional_summary_card.dart';
 
 class ReviewMeal extends HookWidget {
   final Map<String, dynamic> mealFood;
@@ -13,6 +14,6 @@ class ReviewMeal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return NutritionalSummaryCard();
   }
 }
