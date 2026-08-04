@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/food.dart';
 import 'package:my_flutter_application/models/user.dart';
+import 'package:my_flutter_application/screens/review_meal.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
 
@@ -21,7 +22,7 @@ class MealCreationForm extends HookWidget {
     final foodSnapshot = useFuture(foodFuture);
     final foodAndQuantity = useState<Map<int, int>>({});
 
-    final mealFoods = useState<Map<String, dynamic>>({
+    final mealFood = useState<Map<String, dynamic>>({
       "userId": user.id,
       "type": type,
     });
@@ -70,34 +71,48 @@ class MealCreationForm extends HookWidget {
               width: MediaQuery.widthOf(context) / 2,
               child: Center(child: Text("No food items found"),),
               )
-            : ListView.builder(
-              itemCount: food.length,
-              itemBuilder: (context, index) {
-                  final foodItem = food[index];
-                  return ListTile(
-                    title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
-                      isThreeLine: true,
-                      subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FloatingActionButton.small(
-                            child: Text("+"),
-                              onPressed: () {
-                                addFood(foodItem.id);
-                              }
-                          ),
+               : Column (
+                  children: [
+                    ListView.builder(
+                      itemCount: food.length,
+                      itemBuilder: (context, index) {
+                          final foodItem = food[index];
+                          return ListTile(
+                            title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
+                              isThreeLine: true,
+                              subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FloatingActionButton.small(
+                                    child: Text("+"),
+                                      onPressed: () {
+                                        addFood(foodItem.id);
+                                      }
+                                  ),
 
-                          FloatingActionButton.small(
-                            child: Text("-"),
-                              onPressed: () {
-                                removeFood(foodItem.id);
-                              }
-                          ),
-                        ],
-                      )
-                    );
-                }
+                                  FloatingActionButton.small(
+                                    child: Text("-"),
+                                      onPressed: () {
+                                        removeFood(foodItem.id);
+                                      }
+                                  ),
+                                ],
+                              )
+                            );
+                        }
+                    ),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodQuantity: foodAndQuantity.value))
+                        );
+                      },
+                      child: Text("Review Meal ->"),
+                    ),
+                  ],
             )
           ),
 

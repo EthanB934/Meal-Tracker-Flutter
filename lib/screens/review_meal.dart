@@ -1,0 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+
+class ReviewMeal extends HookWidget {
+  final Map<String, dynamic> mealFood;
+  final Map<int, int> foodQuantity;
+
+  const ReviewMeal({
+    super.key,
+    required this.mealFood,
+    required this.foodQuantity
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
+}
