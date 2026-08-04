@@ -37,7 +37,6 @@ class CreateFood extends HookWidget{
 
     void updateFoodState (String name, double? value) {
       final databaseName = FormatNutrientName().formatNutrientName(name);
-      print(databaseName);
         newFood.value = {...newFood.value, databaseName: value};
     }
 

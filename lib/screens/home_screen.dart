@@ -136,7 +136,7 @@ class HomeScreen extends HookWidget {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return MealModal(user: user);
+        return MealModal();
       }
     );
   }

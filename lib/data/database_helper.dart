@@ -376,6 +376,7 @@ class DatabaseHelper {
     );
 
     return result;
+
   }
 
   Future<int> deleteMeal(int mealId) async {

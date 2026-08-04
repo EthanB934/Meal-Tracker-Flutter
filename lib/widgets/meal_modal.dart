@@ -4,11 +4,9 @@ import 'package:my_flutter_application/models/user.dart';
 import 'package:my_flutter_application/screens/meal_creation.dart';
 
 class MealModal extends HookWidget {
-  final User user;
 
   const MealModal({
     super.key,
-    required this.user
   });
 
 
@@ -35,7 +33,7 @@ class MealModal extends HookWidget {
                                   onPressed: () {
                                     Navigator.push(
                                         context,
-                                        MaterialPageRoute<void>(builder: (BuildContext context) => MealCreationForm(mealType: mealTypes[index], user: user))
+                                        MaterialPageRoute<void>(builder: (BuildContext context) => MealCreationForm(mealType: mealTypes[index]))
                                     );
                                   },
                                   child: Text(mealTypes[index])
