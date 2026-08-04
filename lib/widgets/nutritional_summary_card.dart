@@ -5,9 +5,13 @@ import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/utils/floorToDecimal.dart';
 
 class NutritionalSummaryCard extends HookWidget{
+  final bool inReview;
+  final double? projectedAmount;
 
   const NutritionalSummaryCard({
-    super.key
+    super.key,
+    required this.inReview,
+    this.projectedAmount,
   });
 
   @override
@@ -16,6 +20,8 @@ class NutritionalSummaryCard extends HookWidget{
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
+    final currentAmount = useState<double>(9.75);
+    final double? projection = projectedAmount;
 
     if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
       return Scaffold(
@@ -57,6 +63,7 @@ class NutritionalSummaryCard extends HookWidget{
 
     final nutrients = nutrientSnapshot.data ?? [];
     final userPreferences = userPreferencesSnapshot.data ?? [];
+
     return SizedBox(
       height: 300,
       child: Card(
@@ -68,24 +75,23 @@ class NutritionalSummaryCard extends HookWidget{
                     (n) => n.id == preference.nutrientId
             );
 
-            final double currentAmount = 9.75;
 
             return SizedBox(
                 height: 100,
                 width: double.infinity,
                 child: ListTile(
                     title: Text(nutrient.name),
-                    subtitle: Text('${FloorToDecimal().floorToDecimal(((preference.goalAmount - currentAmount)).toDouble(), 2)} remaining'),
+                    subtitle: Text('${FloorToDecimal().floorToDecimal(((preference.goalAmount - currentAmount.value)).toDouble(), 2)} remaining'),
                     trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text('$currentAmount ${nutrient.unit} / ${preference.goalAmount} ${nutrient.unit}'),
+                          Text('${currentAmount.value} ${nutrient.unit} / ${preference.goalAmount} ${nutrient.unit}'),
                           SizedBox(
                             height: 10,
                             width: 250,
                             child: LinearProgressIndicator(
-                              value: currentAmount / preference.goalAmount,
+                              value: currentAmount.value / preference.goalAmount,
                             ),
                           ),
                         ]

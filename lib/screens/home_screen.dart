@@ -35,7 +35,7 @@ class HomeScreen extends HookWidget {
 
             Text("Nutritional Summary"),
 
-            NutritionalSummaryCard(),
+            NutritionalSummaryCard(inReview: false,),
 
             Text("Today's Meals"),
 

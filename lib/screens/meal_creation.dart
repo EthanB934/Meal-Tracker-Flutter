@@ -114,7 +114,7 @@ class MealCreationForm extends HookWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodQuantity: foodAndQuantity.value))
+                            MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodIdsAndQuantity:foodAndQuantity.value ))
                           );
                         },
                         child: Text("Review Meal ->"),

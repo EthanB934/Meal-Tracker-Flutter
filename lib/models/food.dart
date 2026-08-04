@@ -83,4 +83,31 @@ class Food {
       vitaminK: map['vitamin_k'] as double,
     );
   }
+
+  dynamic operator [](String key) {
+    return switch (key) {
+      "added_sugars" => addedSugars,
+      "calcium" => calcium,
+      "calories" => calories,
+      "cholesterol" => cholesterol,
+      "dietaryFiber" => dietaryFiber,
+      "iron" => iron,
+      "potassium" => potassium,
+      "protein" => protein,
+      "saturatedFat" => saturatedFat,
+      "sodium" => sodium,
+      "totalCarbohydrates" => totalCarbohydrates,
+      "totalFat" => totalFat,
+      "totalSugars" => totalSugars,
+      "transFat" => transFat,
+      "vitaminA" => vitaminA,
+      "vitaminB6" => vitaminB6,
+      "vitaminB12" => vitaminB12,
+      "vitaminC" => vitaminC,
+      "vitaminD" => vitaminD,
+      "vitaminE" => vitaminE,
+      "vitaminK" => vitaminK,
+       _ => null,
+    };
+  }
 }
