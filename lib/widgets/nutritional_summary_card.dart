@@ -6,12 +6,12 @@ import 'package:my_flutter_application/utils/floorToDecimal.dart';
 
 class NutritionalSummaryCard extends HookWidget{
   final bool inReview;
-  final double? projectedAmount;
+  final Map<String, double>? nutrientsTotalContributions;
 
   const NutritionalSummaryCard({
     super.key,
     required this.inReview,
-    this.projectedAmount,
+    this.nutrientsTotalContributions,
   });
 
   @override
@@ -21,7 +21,6 @@ class NutritionalSummaryCard extends HookWidget{
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
     final currentAmount = useState<double>(9.75);
-    final double? projection = projectedAmount;
 
     if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
       return Scaffold(
@@ -64,6 +63,17 @@ class NutritionalSummaryCard extends HookWidget{
     final nutrients = nutrientSnapshot.data ?? [];
     final userPreferences = userPreferencesSnapshot.data ?? [];
 
+    double summaryValue (Map<String, double>? foodTotalContributions, double currentValue, double goalAmount, String currentNutrient) {
+      print(foodTotalContributions);
+      if(inReview){
+        if(nutrientsTotalContributions!.containsKey(currentNutrient)) {
+          return nutrientsTotalContributions![currentNutrient]! + currentValue / goalAmount;
+        }
+      }
+
+        return currentValue / goalAmount;
+    }
+
     return SizedBox(
       height: 300,
       child: Card(
@@ -91,7 +101,7 @@ class NutritionalSummaryCard extends HookWidget{
                             height: 10,
                             width: 250,
                             child: LinearProgressIndicator(
-                              value: currentAmount.value / preference.goalAmount,
+                              value: summaryValue(nutrientsTotalContributions, currentAmount.value, preference.goalAmount, nutrient.name),
                             ),
                           ),
                         ]

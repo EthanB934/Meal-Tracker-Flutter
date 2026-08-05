@@ -15,13 +15,34 @@ class ReviewMeal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-  final nutrientGoalAmountTotals = useState<Map<String, double>>(Projection().preferredNutrientsGoalAmounts(foodIdsAndQuantity.values.toList()));
+    final nutrientsGoalAmountTotalsFuture = useMemoized(() => Projection().preferredNutrientsGoalAmounts(foodIdsAndQuantity));
+    final nutrientGoalAmountTotalsSnapshot = useFuture(nutrientsGoalAmountTotalsFuture);
 
-  
+    if(nutrientGoalAmountTotalsSnapshot.connectionState == ConnectionState.waiting) {
+      return Scaffold(
+        body: SizedBox(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    if(nutrientGoalAmountTotalsSnapshot.hasError) {
+      return Scaffold(
+        body: SizedBox(
+          child: Center(
+            child: Text("Error: ${nutrientGoalAmountTotalsSnapshot.error}"),
+          ),
+        )
+      );
+    }
+
+    final nutrientGoalAmountTotals = nutrientGoalAmountTotalsSnapshot.data as Map<String, double>;
 
     return Scaffold(
       appBar: AppBar(title: Text("Review Meal"),),
-      body: NutritionalSummaryCard(inReview: true,)
+      body: NutritionalSummaryCard(inReview: true, nutrientsTotalContributions: nutrientGoalAmountTotals,)
     );
   }
 }
