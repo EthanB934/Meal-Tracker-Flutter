@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
 import 'package:my_flutter_application/utils/floorToDecimal.dart';
+import 'package:my_flutter_application/utils/format_nutrient_name.dart';
 
 class NutritionalSummaryCard extends HookWidget{
   final bool inReview;
@@ -20,7 +21,8 @@ class NutritionalSummaryCard extends HookWidget{
     final userPreferencesFuture = useMemoized(() => NutrientService().fetchUserPreferences());
     final nutrientSnapshot = useFuture(nutrientsFuture);
     final userPreferencesSnapshot = useFuture(userPreferencesFuture);
-    final currentAmount = useState<double>(9.75);
+    final currentAmount = useState<double>(0.0);
+    final projectedAmount = useState<double>(0.0);
 
     if(nutrientSnapshot.connectionState == ConnectionState.waiting || userPreferencesSnapshot.connectionState == ConnectionState.waiting) {
       return Scaffold(
@@ -60,31 +62,66 @@ class NutritionalSummaryCard extends HookWidget{
       );
     }
 
+    double remainingGoalAmount(double goalAmount, double currentValue, double projectionValue) {
+      final previousTotal = goalAmount - currentValue;
+      final newTotal = previousTotal - projectionValue;
+      final formattedDecimal = FloorToDecimal().floorToDecimal(newTotal, 2);
+
+      projectedAmount.value = projectionValue + currentValue;
+
+      return formattedDecimal;
+    }
+
     final nutrients = nutrientSnapshot.data ?? [];
     final userPreferences = userPreferencesSnapshot.data ?? [];
 
-    double summaryValue (Map<String, double>? foodTotalContributions, double currentValue, double goalAmount, String currentNutrient) {
-      print(foodTotalContributions);
-      if(inReview){
-        if(nutrientsTotalContributions!.containsKey(currentNutrient)) {
-          return nutrientsTotalContributions![currentNutrient]! + currentValue / goalAmount;
-        }
-      }
 
-        return currentValue / goalAmount;
-    }
+
 
     return SizedBox(
       height: 300,
       child: Card(
-        child: ListView.builder(
+        child: inReview
+        ? ListView.builder(
           itemCount: userPreferences.length,
           itemBuilder: (context, index) {
             final preference = userPreferences[index];
             final Nutrient nutrient = nutrients.firstWhere(
                     (n) => n.id == preference.nutrientId
             );
+            final formattedNutrientName = FormatNutrientName().formatNutrientName(nutrient.name);
 
+            return SizedBox(
+                height: 100,
+                width: double.infinity,
+                child: ListTile(
+                    title: Text(nutrient.name),
+                    subtitle: Text('${remainingGoalAmount(preference.goalAmount, currentAmount.value, nutrientsTotalContributions?[formattedNutrientName] ?? 0)} remaining'),
+                    trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('${projectedAmount.value} ${nutrient.unit} / ${preference.goalAmount} ${nutrient.unit}'),
+                          SizedBox(
+                            height: 10,
+                            width: 250,
+                            child: LinearProgressIndicator(
+                              value: projectedAmount.value / preference.goalAmount,
+                            ),
+                          ),
+                        ]
+                    )
+                )
+            );
+          },
+        )
+            : ListView.builder(
+          itemCount: userPreferences.length,
+          itemBuilder: (context, index) {
+            final preference = userPreferences[index];
+            final Nutrient nutrient = nutrients.firstWhere(
+                    (n) => n.id == preference.nutrientId
+            );
 
             return SizedBox(
                 height: 100,
@@ -101,7 +138,7 @@ class NutritionalSummaryCard extends HookWidget{
                             height: 10,
                             width: 250,
                             child: LinearProgressIndicator(
-                              value: summaryValue(nutrientsTotalContributions, currentAmount.value, preference.goalAmount, nutrient.name),
+                              value: currentAmount.value / preference.goalAmount,
                             ),
                           ),
                         ]
@@ -109,7 +146,7 @@ class NutritionalSummaryCard extends HookWidget{
                 )
             );
           },
-        ),
+        )
       ),
     );
   }

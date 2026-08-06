@@ -30,18 +30,17 @@ class Projection {
   }
 
   Future<Map<String, double>> preferredNutrientsGoalAmounts(Map<int, int> foodIds) async {
-    final Map<String, double>projectedAmounts = {};
+    Map<String, double>projectedAmounts = {};
     await setFood();
     await setTrackedNutrients();
     final List<Food> mealFoods = foods.where((food) => foodIds.containsKey(food.id)).toList();
-
     for(final food in mealFoods) {
+      final int foodQuantity = foodIds[food.id] ?? 1;
       for(final nutrient in trackedNutrients) {
         final String foodFormattedNutrientName = FormatNutrientName().formatNutrientName(nutrient.name);
-        final double foodValue = food[(foodFormattedNutrientName)] ?? 0.0;
+        final double foodNutrientProductValue = (food[(foodFormattedNutrientName)] * foodQuantity) ?? 0.0;
         final double previousValue = projectedAmounts[foodFormattedNutrientName] ?? 0.0;
-        projectedAmounts[foodFormattedNutrientName] = previousValue + foodValue;
-
+        projectedAmounts = {...projectedAmounts, foodFormattedNutrientName: previousValue + foodNutrientProductValue};
       }
     }
 
