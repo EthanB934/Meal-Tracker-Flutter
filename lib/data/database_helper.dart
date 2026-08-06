@@ -352,15 +352,28 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<int> createMeal (Meal newMeal)  async {
+  Future<int> createMeal (Map<String, dynamic> newMeal)  async {
     final db = await database;
 
-    int result = await db.rawInsert(
-      'INSERT INTO meal VALUES (?, ?, ?) ',
-      [newMeal.userId, newMeal.type, newMeal.createdAt]
-    );
+    try {
+      int result = await db.insert(
+          "meal", newMeal, conflictAlgorithm: ConflictAlgorithm.abort);
 
-    return result;
+      if (result == 1) {
+        List<Map<String, Object?>> lastCreatedRow = await db.query(
+            "meal", columns: ["id"],
+            where: "rowId = ?",
+            whereArgs: [result],
+            limit: 1);
+        Map<String, Object?> createdRowMap = lastCreatedRow.first;
+        int mealId = createdRowMap["id"] as int;
+        return mealId;
+      }
+      return 0;
+    }
+    catch (e) {
+      throw Exception("There was an error creating meal: ${e.toString()}");
+    }
   }
 
   Future<int> updateMeal(Meal meal) async {
@@ -392,6 +405,13 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<int> createMealFoodRelationship (Map<String, dynamic> mealFoodRelationship) async {
+    final db = await database;
+
+    int result = await db.insert("meal_food", mealFoodRelationship, conflictAlgorithm: ConflictAlgorithm.abort);
+
+    return result;
+  }
 //   Food data
 
   Future<List<Map<String, Object?>>> fetchFood() async {

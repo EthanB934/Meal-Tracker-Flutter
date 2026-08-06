@@ -8,16 +8,20 @@ class MealService {
     return results.map((result) => Meal.fromMap(result)).toList();
   }
 
-  Future<int> createNewMeal (Meal meal) async {
-    bool validMealType = validateMealType(meal.type);
+  Future<int> createNewMeal (Map<String, dynamic> meal) async {
+    bool validMealType = validateMealType(meal["type"]);
 
     if(!validMealType) {
-      throw Exception("${meal.type} is not a valid meal option");
+      throw Exception("${meal["type"]} is not a valid meal option");
     }
 
-    meal.createdAt = createTimeStamp();
+    meal["createdAt"] = createTimeStamp();
 
-    int result = await DatabaseHelper().createMeal(meal);
+    int result = await DatabaseHelper().createMeal({
+      "userId": meal["userId"],
+      "type": meal["type"],
+      "createdAt": meal["createdAt"]
+    });
 
     if(result == 0) {
       throw Exception("There was an issue submitting the meal"); 
@@ -52,10 +56,31 @@ class MealService {
     return result;
   }
 
+  Future<int> createMealFoodRelationship(List<Map<String, dynamic>> mealFoodRelationships) async {
+    Future<int> mealId = createNewMeal(mealFoodRelationships.first);
+
+    int mealFoodsSubmitted = 0;
+    for(final mealFoodRelationship in mealFoodRelationships) {
+      int result = await DatabaseHelper().createMealFoodRelationship({
+        "mealId": mealId,
+        "foodId": mealFoodRelationship["foodId"],
+        "quantity": mealFoodRelationship["quantity"]
+      });
+
+      if(result == 0) {
+        throw Exception("There was an issue adding ${mealFoodRelationship["foodId"]} to ${mealFoodRelationship["mealId"]}");
+      }
+
+      mealFoodsSubmitted = 1;
+    }
+
+    return mealFoodsSubmitted;
+  }
+
   bool validateMealType(String mealType) {
     List validMealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
-    bool isValid = validMealTypes.firstWhere((validMealType) => validMealType == mealType);
+    bool isValid = validMealTypes.contains(mealType);
 
     return isValid;
   }

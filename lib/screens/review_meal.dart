@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/services/food_service.dart';
+import 'package:my_flutter_application/services/meal_service.dart';
 import 'package:my_flutter_application/services/projection.dart';
 import 'package:my_flutter_application/widgets/nutritional_summary_card.dart';
 
@@ -83,23 +84,23 @@ class ReviewMeal extends HookWidget {
       return foodNames;
     }
 
-    List<Map<dynamic, dynamic>> joinMealMetaDataWithFoods() {
-      List<Map<dynamic, dynamic>> mealFoodRelationships = [];
+    List<Map<String, dynamic>> joinMealMetaDataWithFoods() {
+      List<Map<String, dynamic>> mealFoodRelationships = [];
 
-        Map<dynamic, dynamic> mealFoodRelationship = mealMetaData;
+        Map<String, dynamic> mealFoodRelationship = {};
 
         int counter = 0;
         for(final foodIdAndQuantity in foodIdsAndQuantity.entries) {
           mealFoodRelationship = {
-            "userId": mealFoodRelationship["userId"],
-            "type": mealFoodRelationship["type"],
-            foodIdAndQuantity.key: foodIdAndQuantity.value
+            "userId": mealMetaData["userId"],
+            "type": mealMetaData["type"],
+            "foodId": foodIdAndQuantity.key,
+            "quantity": foodIdAndQuantity.value
           };
 
           mealFoodRelationships.insert(counter, mealFoodRelationship);
           counter = counter + 1;
         }
-
       return mealFoodRelationships;
     }
     return Scaffold(
@@ -116,7 +117,8 @@ class ReviewMeal extends HookWidget {
 
           ElevatedButton(
               onPressed: () {
-                joinMealMetaDataWithFoods();
+                List<Map<String, dynamic>> mealFoodRelationships = joinMealMetaDataWithFoods();
+                MealService().createMealFoodRelationship(mealFoodRelationships);
               },
               child: Text("Save Food")
           ),
