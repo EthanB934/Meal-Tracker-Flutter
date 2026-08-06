@@ -20,7 +20,7 @@ class MealCreationForm extends HookWidget {
     final foodSnapshot = useFuture(foodFuture);
     final foodAndQuantity = useState<Map<int, int>>({});
 
-    final mealFood = useState<Map<String, dynamic>>({
+    final mealMetaData = useState<Map<String, dynamic>>({
       "userId": user.id,
       "type": type,
     });
@@ -114,8 +114,7 @@ class MealCreationForm extends HookWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute<void>(builder: (BuildContext context) =>  ReviewMeal(mealFood: mealFood.value, foodIdsAndQuantity:foodAndQuantity.value ))
-                          );
+                            MaterialPageRoute<void>(builder: (BuildContext context) => ReviewMeal(mealMetaData: mealMetaData.value, foodIdsAndQuantity: foodAndQuantity.value))                          );
                         },
                         child: Text("Review Meal ->"),
                       ),
