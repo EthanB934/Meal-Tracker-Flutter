@@ -38,7 +38,6 @@ class Projection {
       final int foodQuantity = foodIds[food.id] ?? 1;
       for(final nutrient in trackedNutrients) {
         final String foodFormattedNutrientName = FormatNutrientName().formatNutrientName(nutrient.name);
-        print(foodFormattedNutrientName);
         final double foodNutrientProductValue = (food[(foodFormattedNutrientName)] * foodQuantity) ?? 0.0;
         final double previousValue = projectedAmounts[foodFormattedNutrientName] ?? 0.0;
         projectedAmounts = {...projectedAmounts, foodFormattedNutrientName: previousValue + foodNutrientProductValue};

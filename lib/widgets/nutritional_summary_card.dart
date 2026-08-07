@@ -69,7 +69,7 @@ class NutritionalSummaryCard extends HookWidget{
 
       projectedAmount.value = projectionValue + currentValue;
 
-      return formattedDecimal;
+      return formattedDecimal.abs();
     }
 
     final nutrients = nutrientSnapshot.data ?? [];
