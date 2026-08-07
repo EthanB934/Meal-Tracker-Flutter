@@ -405,7 +405,7 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<int> createMealFoodRelationship (Map<String, dynamic> mealFoodRelationship) async {
+  Future<int> createMealFoodRelationship (Map<String, int> mealFoodRelationship) async {
     final db = await database;
 
     int result = await db.insert("meal_food", mealFoodRelationship, conflictAlgorithm: ConflictAlgorithm.abort);

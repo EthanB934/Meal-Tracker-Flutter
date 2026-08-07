@@ -31,7 +31,6 @@ void main() async {
   runApp(MyApp(
     userExists: userExists,
     userHasPreferences: userHasPreferences,
-    user: user,
   ));
 }
 
@@ -40,19 +39,17 @@ class MyApp extends StatelessWidget {
     super.key,
     required this.userExists,
     required this.userHasPreferences,
-    this.user,
   });
 
   final bool userExists;
   final bool userHasPreferences;
-  final User? user;
 
   @override
   Widget build(BuildContext context) {
     if(userExists && userHasPreferences) {
       return MaterialApp(
         title: 'Meal Tracker',
-        home: HomeScreen(user: user!,)
+        home: HomeScreen()
       );
     }
 

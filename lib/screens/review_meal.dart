@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/meal_service.dart';
 import 'package:my_flutter_application/services/projection.dart';
@@ -84,25 +85,6 @@ class ReviewMeal extends HookWidget {
       return foodNames;
     }
 
-    List<Map<String, dynamic>> joinMealMetaDataWithFoods() {
-      List<Map<String, dynamic>> mealFoodRelationships = [];
-
-        Map<String, dynamic> mealFoodRelationship = {};
-
-        int counter = 0;
-        for(final foodIdAndQuantity in foodIdsAndQuantity.entries) {
-          mealFoodRelationship = {
-            "userId": mealMetaData["userId"],
-            "type": mealMetaData["type"],
-            "foodId": foodIdAndQuantity.key,
-            "quantity": foodIdAndQuantity.value
-          };
-
-          mealFoodRelationships.insert(counter, mealFoodRelationship);
-          counter = counter + 1;
-        }
-      return mealFoodRelationships;
-    }
     return Scaffold(
       appBar: AppBar(title: Text("Review Meal"),),
       body: Column(
@@ -116,9 +98,16 @@ class ReviewMeal extends HookWidget {
           Text("Food included in meal: ${renderFoodNames()}"),
 
           ElevatedButton(
-              onPressed: () {
-                List<Map<String, dynamic>> mealFoodRelationships = joinMealMetaDataWithFoods();
-                MealService().createMealFoodRelationship(mealFoodRelationships);
+              onPressed: () async {
+                int result = await MealService().createMealFoodRelationship(mealMetaData, foodIdsAndQuantity);
+                if(result == 1) {
+                  if(context.mounted) {
+                    Navigator.push<void>(
+                        context,
+                      MaterialPageRoute<void>(builder: (BuildContext context) => HomeScreen())
+                    );
+                  }
+                }
               },
               child: Text("Save Food")
           ),

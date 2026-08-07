@@ -1,6 +1,7 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/meal.dart';
 import 'package:my_flutter_application/utils/format_date.dart';
+import 'package:sqflite/sqflite.dart';
 
 class MealService {
   Future<List<Meal>> fetchMeals () async {
@@ -17,11 +18,7 @@ class MealService {
 
     meal["createdAt"] = createTimeStamp();
 
-    int result = await DatabaseHelper().createMeal({
-      "userId": meal["userId"],
-      "type": meal["type"],
-      "createdAt": meal["createdAt"]
-    });
+    int result = await DatabaseHelper().createMeal(meal);
 
     if(result == 0) {
       throw Exception("There was an issue submitting the meal"); 
@@ -56,22 +53,28 @@ class MealService {
     return result;
   }
 
-  Future<int> createMealFoodRelationship(List<Map<String, dynamic>> mealFoodRelationships) async {
-    Future<int> mealId = createNewMeal(mealFoodRelationships.first);
+  Future<int> createMealFoodRelationship(Map<String, dynamic> mealMetaData, Map<int, int> foodIdsAndQuantities) async {
+    int mealId = await createNewMeal(mealMetaData);
+    final iterableFoodIdsAndQuantities = foodIdsAndQuantities.entries.toList();
 
     int mealFoodsSubmitted = 0;
-    for(final mealFoodRelationship in mealFoodRelationships) {
-      int result = await DatabaseHelper().createMealFoodRelationship({
-        "mealId": mealId,
-        "foodId": mealFoodRelationship["foodId"],
-        "quantity": mealFoodRelationship["quantity"]
-      });
 
-      if(result == 0) {
-        throw Exception("There was an issue adding ${mealFoodRelationship["foodId"]} to ${mealFoodRelationship["mealId"]}");
+    try {
+      for (int i = 0; i < iterableFoodIdsAndQuantities.length; i++) {
+        final currentFoodIdAndQuantity = iterableFoodIdsAndQuantities[i];
+        int result = await DatabaseHelper().createMealFoodRelationship({
+          "mealId": mealId,
+          "foodId": currentFoodIdAndQuantity.key,
+          "quantity": currentFoodIdAndQuantity.value
+        });
+
+        if (result == 1) {
+          mealFoodsSubmitted = result;
+        }
+
       }
-
-      mealFoodsSubmitted = 1;
+    } catch(e) {
+      throw Exception("There was an error submitting food ${e.toString()}");
     }
 
     return mealFoodsSubmitted;

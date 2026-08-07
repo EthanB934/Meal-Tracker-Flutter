@@ -89,7 +89,7 @@ class MealCreationForm extends HookWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       FloatingActionButton.small(
-                                          heroTag: "addFoodItem",
+                                          heroTag: "add${foodItem.id}",
                                           child: Text("+"),
                                           onPressed: () {
                                             addFood(foodItem.id);
@@ -97,7 +97,7 @@ class MealCreationForm extends HookWidget {
                                       ),
 
                                       FloatingActionButton.small(
-                                          heroTag: "removeFoodItem",
+                                          heroTag: "remove${foodItem.id}",
                                           child: Text("-"),
                                           onPressed: () {
                                             removeFood(foodItem.id);
@@ -114,7 +114,7 @@ class MealCreationForm extends HookWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute<void>(builder: (BuildContext context) => ReviewMeal(mealMetaData: mealMetaData.value, foodIdsAndQuantity: foodAndQuantity.value))                          );
+                            MaterialPageRoute<void>(builder: (BuildContext context) => ReviewMeal(mealMetaData: mealMetaData.value, foodIdsAndQuantity: foodAndQuantity.value)));
                         },
                         child: Text("Review Meal ->"),
                       ),
