@@ -9,7 +9,9 @@ class FloorToDecimal {
 
     double modifiedDouble = x * mod;
 
-    final double finalNumber = modifiedDouble / mod;
+   final flooredModifiedDouble = modifiedDouble.floor();
+
+   final double finalNumber = flooredModifiedDouble / mod;
 
     return finalNumber;
   }
