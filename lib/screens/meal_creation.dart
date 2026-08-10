@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/screens/review_meal.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/profile_service.dart';
+import 'package:my_flutter_application/widgets/food_list_tile.dart';
 
 class MealCreationForm extends HookWidget {
   final String mealType;
@@ -16,45 +17,30 @@ class MealCreationForm extends HookWidget {
   Widget build(BuildContext context) {
     final type = mealType;
     final user = ProfileService().cachedUser;
-    final foodFuture = useMemoized(() => FoodService().fetchFood());
-    final foodSnapshot = useFuture(foodFuture);
-    final foodAndQuantity = useState<Map<int, int>>({});
 
     final mealMetaData = useState<Map<String, dynamic>>({
       "userId": user.id,
       "type": type,
     });
 
-    if(foodSnapshot.connectionState == ConnectionState.waiting) {
-      return Scaffold(
-        body: Center(child: CircularProgressIndicator())
-      );
+    final foodIdsAndQuantities = useState<Map<int, int>>({});
+
+    void addFood (int foodId) {
+      final currentQuantity = foodIdsAndQuantities.value[foodId] ?? 0;
+      foodIdsAndQuantities.value = {...foodIdsAndQuantities.value, foodId: currentQuantity + 1};
+
     }
 
-    if(foodSnapshot.hasError) {
-      return Scaffold(
-        body: Center(child: Text("Error: ${foodSnapshot.error}"),),
-      );
+    void removeFood (int foodId) {
+      if(foodIdsAndQuantities.value.containsKey(foodId)) {
+        final currentQuantity = foodIdsAndQuantities.value[foodId] ?? 0;
+        foodIdsAndQuantities.value = {...foodIdsAndQuantities.value, foodId: currentQuantity - 1};
+      }
+
+      if(foodIdsAndQuantities.value[foodId] == 0) {
+        foodIdsAndQuantities.value = {...foodIdsAndQuantities.value}..remove(foodId);
+      }
     }
-
-      void addFood (int foodId) {
-        final currentQuantity = foodAndQuantity.value[foodId] ?? 0;
-        foodAndQuantity.value = {...foodAndQuantity.value, foodId: currentQuantity + 1};
-
-      }
-
-      void removeFood (int foodId) {
-        if(foodAndQuantity.value.containsKey(foodId)) {
-          final currentQuantity = foodAndQuantity.value[foodId] ?? 0;
-          foodAndQuantity.value = {...foodAndQuantity.value, foodId: currentQuantity - 1};
-        }
-
-        if(foodAndQuantity.value[foodId] == 0) {
-          foodAndQuantity.value = {...foodAndQuantity.value}..remove(foodId);
-        }
-      }
-
-    final food = foodSnapshot.data ?? [];
 
     return Scaffold(
       appBar: AppBar(title: Text("Add Foods"),),
@@ -63,65 +49,23 @@ class MealCreationForm extends HookWidget {
         width: MediaQuery.widthOf(context),
         child: Column(
           children: [
-            SizedBox(
-              height: (MediaQuery.heightOf(context) / 4) *3,
-              width: double.infinity,
-              child: food.isEmpty
-              ? SizedBox(
-                height: MediaQuery.heightOf(context) / 2,
-                width: double.infinity,
-                child: Center(child: Text("No food items found"),),
-                )
-                 : Column (
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.heightOf(context) / 2,
-                        width: double.infinity,
-                        child: ListView.builder(
-                            itemCount: food.length,
-                            itemBuilder: (context, index) {
-                              final foodItem = food[index];
-                              return ListTile(
-                                  title: Text(foodItem.name, style: TextStyle(fontSize: 32),),
-                                  isThreeLine: true,
-                                  subtitle: Text("${foodAndQuantity.value[foodItem.id] ?? 0}", style: TextStyle(fontSize: 24),),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      FloatingActionButton.small(
-                                          heroTag: "add${foodItem.id}",
-                                          child: Text("+"),
-                                          onPressed: () {
-                                            addFood(foodItem.id);
-                                          }
-                                      ),
+            FoodListTile(foodIdsAndQuantities: foodIdsAndQuantities.value, addFood: addFood, removeFood: removeFood,),
 
-                                      FloatingActionButton.small(
-                                          heroTag: "remove${foodItem.id}",
-                                          child: Text("-"),
-                                          onPressed: () {
-                                            removeFood(foodItem.id);
-                                          }
-                                      ),
-                                    ],
-                                  )
-                              );
-                            }
-                        ),
-                      ),
-
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(builder: (BuildContext context) => ReviewMeal(mealMetaData: mealMetaData.value, foodIdsAndQuantity: foodAndQuantity.value)));
-                        },
-                        child: Text("Review Meal ->"),
-                      ),
-                    ],
-              )
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(builder: (BuildContext context) => ReviewMeal(
+                      mealMetaData: mealMetaData.value,
+                      foodIdsAndQuantities: foodIdsAndQuantities.value,
+                      addFood: addFood,
+                      removeFood: removeFood,
+                    )
+                  )
+                );
+              },
+              child: Text("Review Meal ->"),
             ),
-
           ],
         ),
       ),

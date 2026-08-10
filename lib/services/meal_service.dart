@@ -68,7 +68,7 @@ class MealService {
           "quantity": currentFoodIdAndQuantity.value
         });
 
-        if (result == 1) {
+        if (result != 0) {
           mealFoodsSubmitted = result;
         }
 

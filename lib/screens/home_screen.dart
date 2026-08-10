@@ -26,35 +26,55 @@ class HomeScreen extends HookWidget {
           )
         ],
       ),
-        body: Column(
-          children: [
+        body:SizedBox(
+          height: (MediaQuery.heightOf(context) / 4) * 3,
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
 
-            Text("Nutritional Summary"),
+              Expanded(
+                flex: 1,
+                child: Text("Nutritional Summary",),
+              ),
 
-            NutritionalSummaryCard(inReview: false,),
-
-            Text("Today's Meals"),
-
-            SizedBox(
-              height: 300,
-              child: ListView.builder(
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: Text("Neal #${index + 1}"),
-                    );
-                  }
-              )
-            ),
+              Expanded(
+                flex: 1,
+                child: NutritionalSummaryCard(inReview: false,),
+              ),
 
 
-            ElevatedButton(
-                onPressed: () => _dialogBuilder(context),
-                child: Text("Create New Meal")
-            )
-          ],
+              Expanded(
+                flex: 1,
+                  child: Text("Today's Meals"),
+              ),
 
+
+              SizedBox(
+                  height: 300,
+                  child: ListView.builder(
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Text("Neal #${index + 1}"),
+                        );
+                      }
+                  )
+              ),
+
+              Expanded(
+                flex: 1,
+                child: ElevatedButton(
+                      onPressed: () => _dialogBuilder(context),
+                      child: Text("Create New Meal")
+                  )
+              ),
+
+            ],
+
+          ),
         )
+
     );
   }
 

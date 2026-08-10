@@ -359,7 +359,7 @@ class DatabaseHelper {
       int result = await db.insert(
           "meal", newMeal, conflictAlgorithm: ConflictAlgorithm.abort);
 
-      if (result == 1) {
+      if (result != 0) {
         List<Map<String, Object?>> lastCreatedRow = await db.query(
             "meal", columns: ["id"],
             where: "rowId = ?",
