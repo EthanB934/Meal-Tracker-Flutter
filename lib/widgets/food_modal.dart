@@ -14,15 +14,15 @@ class FoodModal extends HookWidget {
     final foodNameController = TextEditingController();
     final costController = TextEditingController();
 
-    return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.heightOf(context),
+    return Dialog(
+      child: SizedBox(
+        height: 500,
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: MediaQuery.heightOf(context) / 2,
+            height: 250,
             width: MediaQuery.widthOf(context) / 2,
             child: Form(
               key: formKey,

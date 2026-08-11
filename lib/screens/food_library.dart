@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/widgets/food_modal.dart';
 
@@ -33,12 +34,21 @@ class FoodLibrary extends HookWidget {
     final food = foodSnapshot.data ?? [];
 
     return Scaffold(
-      appBar: AppBar(title: Text("Food Library"),),
+      appBar: AppBar(title: Text("Food Library"), actions: [
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (BuildContext context) => HomeScreen())
+            );
+          },
+        )
+      ],),
       body: Column(
         children: [
 
           SizedBox(
-            height: (MediaQuery.heightOf(context) / 4) * 3,
+            height: (MediaQuery.heightOf(context) / 4) * 2,
             width: MediaQuery.widthOf(context),
             child: food.isEmpty
             ? SizedBox(
