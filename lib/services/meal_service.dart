@@ -1,5 +1,6 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/meal.dart';
+import 'package:my_flutter_application/models/meal_food.dart';
 import 'package:my_flutter_application/utils/format_date.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,6 +8,11 @@ class MealService {
   Future<List<Meal>> fetchMeals () async {
     List<Map<String, Object?>> results = await DatabaseHelper().fetchMeals();
     return results.map((result) => Meal.fromMap(result)).toList();
+  }
+
+  Future<List<MealFood>> fetchMealFoods () async {
+    List<Map<String, Object?>> results = await DatabaseHelper().fetchMealFoods();
+    return results.map((result) => MealFood.fromMap(result)).toList();
   }
 
   Future<int> createNewMeal (Map<String, dynamic> meal) async {

@@ -405,6 +405,13 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<List<Map<String, Object?>>> fetchMealFoods() async {
+    final db = await database;
+
+    List<Map<String, Object?>> results = await db.query("meal_foods");
+
+    return results;
+  }
   Future<int> createMealFoodRelationship (Map<String, int> mealFoodRelationship) async {
     final db = await database;
 

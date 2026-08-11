@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/screens/food_library.dart';
+import 'package:my_flutter_application/services/meal_service.dart';
 import 'package:my_flutter_application/utils/greeting.dart';
 import 'package:my_flutter_application/widgets/meal_modal.dart';
 import 'package:my_flutter_application/widgets/nutritional_summary_card.dart';
@@ -12,6 +13,38 @@ class HomeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mealsFuture = useMemoized(() => MealService().fetchMeals());
+    final mealsSnapshot = useFuture(mealsFuture);
+    final mealFoodsFuture = useMemoized(() => MealService().fetchMealFoods());
+    final mealFoodsSnapshot = useFuture(mealFoodsFuture);
+    
+    if(mealsSnapshot.connectionState == ConnectionState.waiting || mealFoodsSnapshot.connectionState == ConnectionState.waiting) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
+    if(mealsSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text("Error: ${mealsSnapshot.error}"),
+        ),
+      );
+    }
+
+    if(mealFoodsSnapshot.hasError) {
+      return Scaffold(
+        body: Center(
+          child: Text("Error: ${mealsSnapshot.error}"),
+        ),
+      );
+    }
+
+    final meals = mealsSnapshot.data ?? [];
+    final mealFoods = mealFoodsSnapshot.data ?? [];
+
     return Scaffold(
       appBar: AppBar(
           title: Text(Greeting().greet()),
