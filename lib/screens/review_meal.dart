@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/screens/home_screen.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/meal_service.dart';
-import 'package:my_flutter_application/services/projection.dart';
+import 'package:my_flutter_application/services/meal_food_service.dart';
 import 'package:my_flutter_application/widgets/food_list_tile.dart';
 import 'package:my_flutter_application/widgets/nutritional_summary_card.dart';
 

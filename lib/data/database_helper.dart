@@ -341,7 +341,6 @@ class DatabaseHelper {
   }
 
 //   Meal Data
-
   Future<List<Map<String, Object?>>> fetchMeals() async {
     final db = await database;
 
@@ -405,6 +404,15 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<List<Map<String, Object?>>> fetchTodayMeals(String today) async {
+    final db = await database;
+
+    final List<Map<String, Object?>> results = await db.query("meal",where: today);
+
+    return results;
+  }
+
+  // Meal Food Relationships
   Future<List<Map<String, Object?>>> fetchMealFoods() async {
     final db = await database;
 
@@ -419,8 +427,8 @@ class DatabaseHelper {
 
     return result;
   }
-//   Food data
 
+//   Food data
   Future<List<Map<String, Object?>>> fetchFood() async {
     final db = await database;
     List<Map<String, Object?>> results = await db.rawQuery(

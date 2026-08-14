@@ -1,8 +1,11 @@
+import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/food.dart';
+import 'package:my_flutter_application/models/meal.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/services/food_service.dart';
 import 'package:my_flutter_application/services/nutrient_service.dart';
+import 'package:my_flutter_application/utils/format_date.dart';
 import 'package:my_flutter_application/utils/format_nutrient_name.dart';
 
 class Projection {
@@ -46,5 +49,26 @@ class Projection {
     }
     return projectedAmounts;
 
+  }
+
+  List<Meal> mostRecentMealsOfType(List<Meal> todayMeals) {
+    final List<Meal> mostRecentMealsOfType = [];
+    final mealTypes = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
+    for(final type in mealTypes) {
+       final List<Meal> typeMeals = todayMeals.where((todayMeal) => todayMeal.type == type).toList();
+       typeMeals.sort((a, b) => b.id.compareTo(a.id));
+       final Meal mostRecentTypeMeal = typeMeals.first;
+       mostRecentMealsOfType.add(mostRecentTypeMeal);
+    }
+
+    return mostRecentMealsOfType;
+  }
+
+  Future<List<Meal>> fetchMostRecentTodayMeals() async {
+    final String today = FormatDate().trimTimeStamp(DateTime.now());
+    final List<Map<String, Object?>> todayMealsRecords = await DatabaseHelper().fetchTodayMeals(today);
+    final List<Meal> todayMeals = todayMealsRecords.map((todayMealRecord) => Meal.fromMap(todayMealRecord)).toList();
+    return mostRecentMealsOfType(todayMeals);
   }
 }
