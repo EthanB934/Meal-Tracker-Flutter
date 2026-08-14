@@ -106,6 +106,8 @@ class HomeScreen extends HookWidget {
     c. if query fails, a meal for that type does not exist. Render a fallback
   3. For each recent meal of a type
     a. Find all meal food relationships
+        ^
+        |---- Done
     b. For each meal food relationship
       a. Get the food by foodId from meal food relationship
       b. track cost with counter

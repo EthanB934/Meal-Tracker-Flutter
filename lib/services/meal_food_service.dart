@@ -1,6 +1,7 @@
 import 'package:my_flutter_application/data/database_helper.dart';
 import 'package:my_flutter_application/models/food.dart';
 import 'package:my_flutter_application/models/meal.dart';
+import 'package:my_flutter_application/models/meal_food.dart';
 import 'package:my_flutter_application/models/nutrient.dart';
 import 'package:my_flutter_application/models/user_nutrient_preference.dart';
 import 'package:my_flutter_application/services/food_service.dart';
@@ -70,5 +71,22 @@ class Projection {
     final List<Map<String, Object?>> todayMealsRecords = await DatabaseHelper().fetchTodayMeals(today);
     final List<Meal> todayMeals = todayMealsRecords.map((todayMealRecord) => Meal.fromMap(todayMealRecord)).toList();
     return mostRecentMealsOfType(todayMeals);
+  }
+
+  Future<List<MealFood>> fetchMealFoodsByMealId(int mealId) async {
+    final List<Map<String, Object?>> todayMealFoodsRecords = await DatabaseHelper().fetchTodayMealFoods(mealId);
+    return todayMealFoodsRecords.map((todayMealFoodsRecord) => MealFood.fromMap(todayMealFoodsRecord)).toList();
+  }
+
+  Future<List<MealFood>> fetchTodayFoods() async {
+    final List<Meal> todayMeals = await fetchMostRecentTodayMeals();
+    List<MealFood> todayMealsFoods = [];
+
+    for(final Meal todayMeal in todayMeals) {
+      final List<MealFood> todayMealFoods = await fetchMealFoodsByMealId(todayMeal.id);
+      todayMealsFoods = [...todayMealFoods];
+    }
+
+    return todayMealsFoods;
   }
 }
