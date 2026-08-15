@@ -2,7 +2,7 @@ class MealFood {
   final int id;
   final int mealId;
   final int foodId;
-  final double quantity;
+  final int quantity;
 
   MealFood({
     required this.id,
@@ -16,7 +16,7 @@ class MealFood {
         id: map['id'] as int,
         mealId: map['mealId'] as int,
         foodId: map['foodId'] as int,
-        quantity: map['quantity'] as double,
+        quantity: map['quantity'] as int,
     );
   }
 }

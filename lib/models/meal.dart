@@ -16,7 +16,7 @@ class Meal {
       id: map['id'] as int,
       userId: map['userId'] as int,
       type: map['type'] as String,
-      createdAt: map['createdAt'] as String
+      createdAt: map['createdAT'] as String
     );
   }
 }

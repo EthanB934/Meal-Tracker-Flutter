@@ -407,7 +407,7 @@ class DatabaseHelper {
   Future<Map<String, Object?>> fetchMealById(int mealId) async {
     final db = await database;
 
-    final List<Map<String, Object?>> results = await db.query("meal", where: "$mealId");
+    final List<Map<String, Object?>> results = await db.query("meal", where: "id = ?", whereArgs: [mealId]);
     final Map<String, Object?> result = results.first;
 
     return result;
@@ -416,7 +416,11 @@ class DatabaseHelper {
   Future<List<Map<String, Object?>>> fetchTodayMeals(String today) async {
     final db = await database;
 
-    final List<Map<String, Object?>> results = await db.query("meal",where: today);
+    final List<Map<String, Object?>> results = await db.query("meal", where: "createdAT = ?", whereArgs: [today]);
+
+    if(results.isEmpty) {
+      return [];
+    }
 
     return results;
   }
@@ -440,7 +444,7 @@ class DatabaseHelper {
   Future<List<Map<String, Object?>>> fetchTodayMealFoods(int mealId) async {
     final db = await database;
 
-    final List<Map<String, Object?>> results = await db.query("meal_food", where: "$mealId");
+    final List<Map<String, Object?>> results = await db.query("meal_food", where: "mealId = ?", whereArgs: [mealId]);
 
     return results;
   }
@@ -529,7 +533,7 @@ class DatabaseHelper {
   Future<Map<String, Object?>> fetchFoodById(int foodId) async {
     final db = await database;
 
-    final List<Map<String, Object?>> results = await db.query("food", where: "$foodId");
+    final List<Map<String, Object?>> results = await db.query("food", where: "id= ?", whereArgs: [foodId]);
     final Map<String, Object?> result = results.first;
     return result;
   }

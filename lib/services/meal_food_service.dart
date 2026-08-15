@@ -56,11 +56,24 @@ class Projection {
     final List<Meal> mostRecentMealsOfType = [];
     final mealTypes = ["Breakfast", "Lunch", "Dinner", "Snacks"];
 
+    if(todayMeals.isEmpty) {
+      return [];
+    }
+
     for(final type in mealTypes) {
        final List<Meal> typeMeals = todayMeals.where((todayMeal) => todayMeal.type == type).toList();
-       typeMeals.sort((a, b) => b.id.compareTo(a.id));
-       final Meal mostRecentTypeMeal = typeMeals.first;
-       mostRecentMealsOfType.add(mostRecentTypeMeal);
+
+       if(typeMeals.isEmpty) {
+         continue;
+       }
+
+       if(typeMeals.length > 1) {
+         typeMeals.sort((a, b) => b.id.compareTo(a.id));
+         final Meal mostRecentTypeMeal = typeMeals.first;
+         mostRecentMealsOfType.add(mostRecentTypeMeal);
+       }
+
+       mostRecentMealsOfType.add(typeMeals.first);
     }
 
     return mostRecentMealsOfType;
@@ -69,6 +82,11 @@ class Projection {
   Future<List<Meal>> fetchMostRecentTodayMeals() async {
     final String today = FormatDate().trimTimeStamp(DateTime.now());
     final List<Map<String, Object?>> todayMealsRecords = await DatabaseHelper().fetchTodayMeals(today);
+
+    if(todayMealsRecords.isEmpty) {
+      return [];
+    }
+
     final List<Meal> todayMeals = todayMealsRecords.map((todayMealRecord) => Meal.fromMap(todayMealRecord)).toList();
     return mostRecentMealsOfType(todayMeals);
   }
@@ -100,16 +118,18 @@ class Projection {
     return Meal.fromMap(mealResult);
   }
 
-  Future<Map<String, Object?>> fetchTodayFoodInfo () async {
+  Future<Map<String, Object>> fetchTodayFoodInfo () async {
     final List<Meal> mostRecentTodayMeals = await fetchMostRecentTodayMeals();
     final List<MealFood> todayMealsFoods = await fetchTodayMealsFoods();
 
     Map<String, Object> todayFoodInfo = {
-      "breakfast": {},
-      "lunch": {},
-      "dinner": {},
-      "snacks": {},
+      "breakfast": {"cost": 0.0, "details": ""},
+      "lunch": {"cost": 0.0, "details": ""},
+      "dinner": {"cost": 0.0, "details": ""},
+      "snacks": {"cost": 0.0, "details": ""},
     };
+
+
 
       for(final meal in mostRecentTodayMeals) {
         List<MealFood> currentMealFoods = todayMealsFoods.where((todayMeaLFood) => todayMeaLFood.mealId == meal.id).toList();
@@ -119,15 +139,16 @@ class Projection {
 
           Map<String, Object> mealInfo = todayFoodInfo[(meal.type).toLowerCase()] as Map<String, Object>;
 
-          double currentMealCost = mealInfo["cost"] as double;
+          double currentMealCost = mealInfo["cost"] as double ;
           double updatedCost =  currentMealCost + (food.cost * mealFood.quantity);
 
-          List<String> mealInfoDetails = mealInfo["details"] as List<String>;
-          List<String> updatedMealInfoDetails = [...mealInfoDetails, "${mealFood.quantity} ${food.name}"];
-          mealInfo = {...mealInfo, "cost": updatedCost, "details": updatedMealInfoDetails};
+          String mealInfoDetails = mealInfo["details"] as String;
+          String updatedMealInfoDetails =  "$mealInfoDetails ${mealFood.quantity} ${food.name}";
+          mealInfo = { "cost": updatedCost, "details": updatedMealInfoDetails};
+          todayFoodInfo[(meal.type).toLowerCase()] = mealInfo;
+
         }
       }
-
       return todayFoodInfo;
     }
 }
