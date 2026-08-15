@@ -78,7 +78,7 @@ class Projection {
     return todayMealFoodsRecords.map((todayMealFoodsRecord) => MealFood.fromMap(todayMealFoodsRecord)).toList();
   }
 
-  Future<List<MealFood>> fetchTodayFoods() async {
+  Future<List<MealFood>> fetchTodayMealsFoods() async {
     final List<Meal> todayMeals = await fetchMostRecentTodayMeals();
     List<MealFood> todayMealsFoods = [];
 
@@ -89,4 +89,45 @@ class Projection {
 
     return todayMealsFoods;
   }
+
+  Future<Food> fetchFoodById(int foodId) async {
+    final Map<String, Object?> foodRecord = await DatabaseHelper().fetchFoodById(foodId);
+    return Food.fromMap(foodRecord);
+  }
+
+  Future<Meal> fetchMealById(int mealId) async {
+    final Map<String, Object?> mealResult = await DatabaseHelper().fetchMealById(mealId);
+    return Meal.fromMap(mealResult);
+  }
+
+  Future<Map<String, Object?>> fetchTodayFoodInfo () async {
+    final List<Meal> mostRecentTodayMeals = await fetchMostRecentTodayMeals();
+    final List<MealFood> todayMealsFoods = await fetchTodayMealsFoods();
+
+    Map<String, Object> todayFoodInfo = {
+      "breakfast": {},
+      "lunch": {},
+      "dinner": {},
+      "snacks": {},
+    };
+
+      for(final meal in mostRecentTodayMeals) {
+        List<MealFood> currentMealFoods = todayMealsFoods.where((todayMeaLFood) => todayMeaLFood.mealId == meal.id).toList();
+
+        for(final mealFood in currentMealFoods) {
+          final Food food = await fetchFoodById(mealFood.foodId);
+
+          Map<String, Object> mealInfo = todayFoodInfo[(meal.type).toLowerCase()] as Map<String, Object>;
+
+          double currentMealCost = mealInfo["cost"] as double;
+          double updatedCost =  currentMealCost + (food.cost * mealFood.quantity);
+
+          List<String> mealInfoDetails = mealInfo["details"] as List<String>;
+          List<String> updatedMealInfoDetails = [...mealInfoDetails, "${mealFood.quantity} ${food.name}"];
+          mealInfo = {...mealInfo, "cost": updatedCost, "details": updatedMealInfoDetails};
+        }
+      }
+
+      return todayFoodInfo;
+    }
 }

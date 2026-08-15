@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:my_flutter_application/screens/food_library.dart';
-import 'package:my_flutter_application/services/meal_service.dart';
 import 'package:my_flutter_application/utils/greeting.dart';
 import 'package:my_flutter_application/widgets/meal_modal.dart';
 import 'package:my_flutter_application/widgets/nutritional_summary_card.dart';
@@ -106,12 +105,12 @@ class HomeScreen extends HookWidget {
     c. if query fails, a meal for that type does not exist. Render a fallback
   3. For each recent meal of a type
     a. Find all meal food relationships
-        ^
-        |---- Done
     b. For each meal food relationship
       a. Get the food by foodId from meal food relationship
       b. track cost with counter
       c. track food name with quantity
+        ^
+        |---- Done
     c. return cost, and quantity: food name
   4. In a list view builder, create list tiles for each meal of type
      a. The type of meal

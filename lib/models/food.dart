@@ -6,7 +6,7 @@ class Food {
   final double? calcium;
   final double? calories;
   final double? cholesterol;
-  final double? cost;
+  final double cost;
   final double? dietaryFiber;
   final double? iron;
   final double? potassium;
@@ -33,7 +33,7 @@ class Food {
     this.calcium,
     this.calories,
     this.cholesterol,
-    this.cost,
+    this.cost = 0.0,
     this.dietaryFiber,
     this.iron,
     this.potassium,

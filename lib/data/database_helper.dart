@@ -404,6 +404,15 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<Map<String, Object?>> fetchMealById(int mealId) async {
+    final db = await database;
+
+    final List<Map<String, Object?>> results = await db.query("meal", where: "$mealId");
+    final Map<String, Object?> result = results.first;
+
+    return result;
+  }
+
   Future<List<Map<String, Object?>>> fetchTodayMeals(String today) async {
     final db = await database;
 
@@ -517,5 +526,11 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<Map<String, Object?>> fetchFoodById(int foodId) async {
+    final db = await database;
 
+    final List<Map<String, Object?>> results = await db.query("food", where: "$foodId");
+    final Map<String, Object?> result = results.first;
+    return result;
+  }
 }
