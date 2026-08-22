@@ -102,7 +102,7 @@ class Projection {
 
     for(final Meal todayMeal in todayMeals) {
       final List<MealFood> todayMealFoods = await fetchMealFoodsByMealId(todayMeal.id);
-      todayMealsFoods = [...todayMealFoods];
+      todayMealsFoods = [...todayMealsFoods, ...todayMealFoods];
     }
 
     return todayMealsFoods;
@@ -132,22 +132,21 @@ class Projection {
 
 
       for(final meal in mostRecentTodayMeals) {
-        List<MealFood> currentMealFoods = todayMealsFoods.where((todayMeaLFood) => todayMeaLFood.mealId == meal.id).toList();
+        List<MealFood> currentMealFoods = todayMealsFoods.where((todayMealFood) => todayMealFood.mealId == meal.id).toList();
+        Map<String, Object> mealInfo = todayFoodInfo[(meal.type).toLowerCase()] as Map<String, Object>;
 
         for(final mealFood in currentMealFoods) {
           final Food food = await fetchFoodById(mealFood.foodId);
 
-          Map<String, Object> mealInfo = todayFoodInfo[(meal.type).toLowerCase()] as Map<String, Object>;
+          double previousMealCost = mealInfo["cost"] as double ;
+          double updatedCost =  previousMealCost + (food.cost * mealFood.quantity);
 
-          double currentMealCost = mealInfo["cost"] as double ;
-          double updatedCost =  currentMealCost + (food.cost * mealFood.quantity);
+          String previousMealInfoDetails = mealInfo["details"] as String;
+          String updatedMealInfoDetails =  "$previousMealInfoDetails ${mealFood.quantity} ${food.name}";
 
-          String mealInfoDetails = mealInfo["details"] as String;
-          String updatedMealInfoDetails =  "$mealInfoDetails ${mealFood.quantity} ${food.name}";
           mealInfo = { "cost": updatedCost, "details": updatedMealInfoDetails};
-          todayFoodInfo[(meal.type).toLowerCase()] = mealInfo;
-
         }
+        todayFoodInfo[(meal.type).toLowerCase()] = mealInfo;
       }
       return todayFoodInfo;
     }
